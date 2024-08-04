@@ -174,13 +174,6 @@
         </div>
     </section>
 
-    <!-- Call to Action Popup Trigger -->
-    <section class="cta-section">
-        <div class="container">
-            <button class="open-popup" onclick="togglePopup()">Get Involved</button>
-        </div>
-    </section>
-
     <!-- Call to Action Popup -->
     <div id="cta-popup" class="call-to-action-popup">
         <span class="close-popup" onclick="togglePopup()">&times;</span>
@@ -206,6 +199,17 @@
         var popup = document.getElementById("cta-popup");
         popup.classList.toggle("active");
     }
+
+    window.addEventListener('scroll', function() {
+        var popup = document.getElementById("cta-popup");
+        var section = document.getElementById("our-work");
+        var sectionPosition = section.getBoundingClientRect().top;
+        var screenPosition = window.innerHeight;
+
+        if (sectionPosition < screenPosition) {
+            popup.classList.add("active");
+        }
+    });
 </script>
 
 </body>
