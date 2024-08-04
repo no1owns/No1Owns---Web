@@ -1,50 +1,51 @@
-/* General styles for the body */
 body {
     margin: 0;
     font-family: 'Rubik', sans-serif;
     line-height: 1.6;
-    color: #333;
     background-color: #f4f4f4;
+    overflow-x: hidden;
 }
 
-/* Flexbox container for responsive layout */
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-}
-
-/* Header styling */
-header.site-header {
+.site-header {
     background: #333;
     color: #fff;
     padding: 10px 0;
-    text-align: center;
     width: 100%;
 }
 
-header.site-header a.branding img {
+.container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.branding img {
     max-width: 150px;
 }
 
-header.site-header nav.site-nav {
-    margin: 20px 0;
+.site-nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
 }
 
-header.site-header nav.site-nav a {
+.site-nav a {
     color: #fff;
     text-decoration: none;
-    margin: 0 15px;
     font-size: 1.1em;
+    padding: 10px;
 }
 
-header.site-header nav.site-nav a:hover {
-    color: #007BFF;
+.site-nav a:hover {
+    background-color: #007BFF;
+    border-radius: 5px;
 }
 
-/* Social Media Links */
 .header-social {
+    text-align: center;
     margin-top: 10px;
 }
 
@@ -54,113 +55,76 @@ header.site-header nav.site-nav a:hover {
     margin: 0 10px;
 }
 
-.header-social a:hover {
-    color: #007BFF;
+.hero {
+    background: url('images/hero.jpg') no-repeat center center/cover;
+    color: #fff;
+    text-align: center;
+    padding: 100px 20px;
 }
 
-/* Section and content styles */
 main.site-content {
-    max-width: 1200px;
-    width: 100%;
-    padding: 20px;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px 0;
+    background-color: #fff;
 }
 
-section.hero {
-    text-align: center;
-    padding: 50px 20px;
-    background-color: #007BFF;
-    color: white;
+section {
+    padding: 60px 20px;
 }
 
-section.hero h1 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
-}
-
-section.hero p {
-    font-size: 1.5em;
-}
-
-/* Projects Section */
-section.projects h2 {
-    font-size: 2em;
+section h2 {
     text-align: center;
     margin-bottom: 20px;
 }
 
-section.projects .grid {
-    display: flex;
-    flex-wrap: wrap;
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
 }
 
-section.projects .project {
-    flex: 1 1 calc(33.333% - 20px);
-    box-sizing: border-box;
+.project {
     background: #f4f4f4;
     padding: 20px;
     border-radius: 8px;
     text-align: center;
 }
 
-section.projects .project img {
+.project img {
     max-width: 100%;
     height: auto;
     margin-bottom: 15px;
 }
 
-section.projects .project h3 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-}
-
-section.projects .project p {
-    font-size: 1.1em;
-}
-
-/* Footer styling */
 footer.site-footer {
     background: #333;
     color: #fff;
     text-align: center;
-    padding: 10px;
-    margin-top: 20px;
-    width: 100%;
+    padding: 20px;
 }
 
-footer.site-footer nav.footer-nav {
-    margin-top: 10px;
-}
-
-footer.site-footer nav.footer-nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 10px;
-}
-
-footer.site-footer nav.footer-nav a:hover {
-    color: #007BFF;
-}
-
-/* Responsive design */
 @media (max-width: 768px) {
-    header.site-header nav.site-nav {
-        display: flex;
+    .site-nav {
         flex-direction: column;
         align-items: center;
     }
 
-    header.site-header nav.site-nav a {
+    .site-nav a {
         margin: 10px 0;
     }
 
-    section.projects .grid {
-        flex-direction: column;
+    .header-social {
+        margin-top: 15px;
     }
 
-    section.projects .project {
-        flex: 1 1 100%;
+    .hero {
+        padding: 60px 20px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    section {
+        padding: 40px 20px;
     }
 }
