@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Filmmakers Therapy Couch</title>
     
+    
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     
@@ -25,10 +26,30 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,700;1,700&family=Rubik:ital,wght@0,400;0,700;1,400;1,700">
     <link rel="stylesheet" href="filmmakers_therapy_couch_styles.css">
 
-    <!-- Preload JS -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/rellax@1.12.1/rellax.min.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/responsive-nav@1.0.39/responsive-nav.min.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/lazysizes@5.3.0/lazysizes.min.js" as="script">
+   
+    <!-- Load and Initialize JavaScript Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/rellax@1.12.1/rellax.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/responsive-nav@1.0.39/responsive-nav.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.0/lazysizes.min.js" async></script>
+
+<!-- Initialize Parallax Scrolling -->
+<script>
+    var rellax = new Rellax('.hero', {
+        speed: -3,
+        center: true
+    });
+</script>
+
+<!-- Initialize Responsive Navigation -->
+<script>
+    var nav = responsiveNav(".site-nav", {
+        animate: true,
+        transition: 284,
+        label: "Menu"
+    });
+</script>
+
+
 </head>
 <body>
 
