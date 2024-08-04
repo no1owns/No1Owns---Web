@@ -27,16 +27,18 @@
     <link rel="stylesheet" href="filmmakers_therapy_couch_styles.css">
 
    
-    <!-- Load and Initialize JavaScript Libraries -->
+   <!-- Load and Initialize JavaScript Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/rellax@1.12.1/rellax.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/responsive-nav@1.0.39/responsive-nav.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.0/lazysizes.min.js" async></script>
 
-<!-- Initialize Parallax Scrolling -->
+<!-- Initialize Parallax Scrolling after DOM is fully loaded -->
 <script>
-    var rellax = new Rellax('.hero', {
-        speed: -3,
-        center: true
+    document.addEventListener("DOMContentLoaded", function() {
+        var rellax = new Rellax('.hero', {
+            speed: -3,
+            center: true
+        });
     });
 </script>
 
