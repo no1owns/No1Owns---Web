@@ -139,6 +139,107 @@ main.site-content {
     text-align: center;
 }
 
+/* About Us Section */
+.about-us__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-unit);
+}
+
+.about-us__text {
+    font-size: 1.1em;
+    color: var(--text-color);
+}
+
+.about-us__images {
+    display: flex;
+    gap: var(--spacing-unit);
+    flex-wrap: wrap;
+}
+
+.about-us__image {
+    width: 100%;
+    border-radius: 4px;
+}
+
+/* Passion Section */
+.passion__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-unit);
+}
+
+.passion__text {
+    font-size: 1.1em;
+    color: var(--text-color);
+}
+
+.passion__images {
+    display: flex;
+    gap: var(--spacing-unit);
+}
+
+.passion__image {
+    width: 100%;
+    border-radius: 4px;
+}
+
+/* Artist Development Section */
+.artist-development__content {
+    font-size: 1.1em;
+    color: var(--text-color);
+    text-align: left;
+}
+
+.watch-button {
+    display: inline-block;
+    background: var(--accent-color);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background var(--transition-speed);
+    text-align: center;
+    margin-top: 20px;
+}
+
+.watch-button:hover {
+    background: #0056b3;
+}
+
+/* Empowering Storytellers Section */
+.highlight-section {
+    background-color: var(--secondary-color);
+    padding: 40px var(--spacing-unit);
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.highlight-section p {
+    font-size: 1.2em;
+    margin: 0 auto;
+    max-width: 800px;
+    color: var(--text-color);
+}
+
+/* Events Section */
+.events__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-unit);
+}
+
+.events__content ul {
+    list-style: disc;
+    padding-left: 20px;
+    margin-top: 0;
+}
+
+.events__content li {
+    margin-bottom: var(--spacing-unit);
+}
+
 /* Call to Action Popup */
 .call-to-action-popup {
     display: none;
