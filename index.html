@@ -291,44 +291,46 @@
 </footer>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const cookieConsent = document.getElementById('cookieConsent');
-    const acceptCookies = document.getElementById('acceptCookies');
-
-    if (cookieConsent && !localStorage.getItem('cookiesAccepted')) {
-        cookieConsent.style.display = 'block';
-    }
-
-    if (acceptCookies) {
-        acceptCookies.addEventListener('click', function() {
-            localStorage.setItem('cookiesAccepted', 'true');
-            cookieConsent.style.display = 'none';
+    document.addEventListener("DOMContentLoaded", function() {
+        const cookieConsent = document.getElementById('cookieConsent');
+        const acceptCookies = document.getElementById('acceptCookies');
+        const closeButton = document.querySelector('.close-popup');
+        const popup = document.getElementById("cta-popup");
+    
+        // Show the cookie consent banner if not already accepted
+        if (cookieConsent && !localStorage.getItem('cookiesAccepted')) {
+            cookieConsent.style.display = 'block';
+        }
+    
+        // Hide the cookie consent banner when 'Accept' is clicked
+        if (acceptCookies) {
+            acceptCookies.addEventListener('click', function() {
+                localStorage.setItem('cookiesAccepted', 'true');
+                cookieConsent.style.display = 'none';
+            });
+        }
+    
+        // Close the popup when the close button is clicked
+        if (closeButton) {
+            closeButton.addEventListener('click', function() {
+                popup.classList.remove('active');
+                sessionStorage.setItem("popupDisplayed", "true");
+            });
+        }
+    
+        // Show the popup when scrolling past the 'our-work' section
+        window.addEventListener('scroll', function() {
+            var section = document.getElementById("our-work");
+            var sectionPosition = section.getBoundingClientRect().top;
+            var screenPosition = window.innerHeight;
+    
+            if (sectionPosition < screenPosition && !sessionStorage.getItem("popupDisplayed")) {
+                popup.classList.add("active");
+            }
         });
-    }
-});
-
-function togglePopup() {
-    var popup = document.getElementById("cta-popup");
-    popup.classList.toggle("active");
-}
-
-function closePopup() {
-    var popup = document.getElementById("cta-popup");
-    popup.classList.remove("active");
-    sessionStorage.setItem("popupDisplayed", "true");
-}
-
-window.addEventListener('scroll', function() {
-    var popup = document.getElementById("cta-popup");
-    var section = document.getElementById("our-work");
-    var sectionPosition = section.getBoundingClientRect().top;
-    var screenPosition = window.innerHeight;
-
-    if (sectionPosition < screenPosition && !sessionStorage.getItem("popupDisplayed")) {
-        popup.classList.add("active");
-    }
-});
-</script>
+    });
+    </script>
+    
 
 </body>
 </html>
