@@ -115,23 +115,23 @@
 
 <header class="site-header">
     <div class="container">
-        <a href="index.html" class="branding">Filmmakers Therapy Couch</a>
         <nav id="site-nav" class="site-nav">
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
             <ul class="nav-list">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About Us</a></li>
                 <li><a href="projects.html">Projects</a></li>
                 <li><a href="events.html">Events</a></li>
                 <li><a href="contact.html">Contact</a></li>
+                <div class="header-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+                <a href="index.html" class="branding">Filmmakers Therapy Couch</a>
             </ul>
         </nav>
-        <div class="header-social">
-            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-        </div>
-        <button class="nav-toggle" aria-label="Toggle navigation">
-            <i class="fas fa-bars"></i>
-        </button>
     </div>
 </header>
 
@@ -330,6 +330,17 @@
     });
     </script>
     
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggle = document.querySelector('.nav-toggle');
+            const navList = document.querySelector('.nav-list');
+        
+            navToggle.addEventListener('click', function() {
+                navList.classList.toggle('active');
+            });
+        });
+        </script>
+        
 
 </body>
 </html>
