@@ -1,5 +1,5 @@
 /* Import Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap');
 
 /* General Styles */
 body {
@@ -23,16 +23,21 @@ body {
     background: #1a1a1a;
     color: #fff;
     padding: 15px 0;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.branding img {
+    max-width: 140px;
 }
 
 .site-nav {
     display: flex;
     align-items: center;
     flex-grow: 1;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .nav-list {
@@ -61,21 +66,28 @@ body {
     text-decoration: none;
     margin: 0 10px;
     font-size: 1.5em;
+    max-height: 32px;
+}
+
+.header-social a img {
+    max-height: 32px;
+}
+
+.nav-toggle {
+    display: none;
 }
 
 /* Hero Section */
 .hero {
-    background-color: #181818;
-    color: #f4f4f4;
     text-align: left;
-    padding: 100px 20px;
+    padding: 20px 20px;
     max-width: 550px;
     margin: 0 auto;
 }
 
 .hero h1 {
     font-size: 2.5em;
-    font-family: 'Merriweather', serif;
+    font-family: 'Baker Signet BT Web', serif;
     margin-bottom: 10px;
     font-weight: 700;
 }
@@ -98,7 +110,7 @@ section {
 
 section h2 {
     font-size: 2em;
-    font-family: 'Merriweather', serif;
+    font-family: 'Baker Signet BT Web', serif;
     color: #f4f4f4;
     font-weight: 700;
     margin-bottom: 30px;
@@ -144,7 +156,7 @@ section h2 {
 .project h3, .article h3 {
     font-size: 1.5em;
     margin-bottom: 15px;
-    font-family: 'Merriweather', serif;
+    font-family: 'Baker Signet BT Web', serif;
     font-weight: 700;
 }
 
@@ -197,4 +209,30 @@ footer a:hover {
     section {
         padding: 40px 20px;
     }
+
+    .nav-toggle {
+        display: block;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5em;
+        cursor: pointer;
+        margin-left: auto;
+    }
+
+    .nav-list.nav-open {
+        display: flex;
+    }
+}
+/* Additional Styles for Video Embed */
+.video-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+#talk-series iframe {
+    max-width: 100%;
+    border-radius: 4px;
 }
