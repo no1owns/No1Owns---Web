@@ -21,10 +21,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="filmmakers_therapy_couch_styles.css">
 
-    <!-- Preload JS -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/rellax@1.12.1/rellax.min.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/responsive-nav@1.0.39/responsive-nav.min.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/lazysizes@5.3.0/lazysizes.min.js" as="script">
 </head>
 <body>
 
@@ -82,8 +78,8 @@
 
                 <!-- Project 4 -->
                 <article class="project">
-                    <img src="images/ethical.png" alt="Storytelling Toolkit" class="lazyload">
-                    <h3>Storytelling Toolkit</h3>
+                    <img src="images/ethical.png" alt="Ethical" class="lazyload">
+                    <h3>Ethical</h3>
                     <p>Innovative Strategy</p>
                 </article>
 
@@ -104,13 +100,48 @@
         </div>
     </section>
 
+    <!-- About Us Section -->
+    <section id="about-us">
+        <div class="container">
+            <h2>About Us</h2>
+            <div class="grid two-columns">
+                <div>
+                    <p>Welcome to Filmmakers Therapy Couch! We're a community of filmmakers, creatives, entrepreneurs, and industry leaders who are dedicated to supporting each other's mental and emotional well-being.</p>
+                    <p>We offer a variety of services, including podcast production in our safe space studio, networking events, and training in DEIB storytelling and impact producing strategies.</p>
+                    <p>Browse our site to learn more about what we have to offer and join our community today!</p>
+                </div>
+                <div class="images-grid">
+                    <img src="images/P1030573.JPG" alt="About Us Image 1">
+                    <img src="images/Screen Shot 2019-08-12 at 3.59.32 PM.png" alt="About Us Image 2">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Passion Section -->
+    <section id="passion">
+        <div class="container">
+            <h2>Here’s what we are passionate about</h2>
+            <div class="grid two-columns">
+                <div>
+                    <p>Filmmakers Therapy Couch - Talk Series</p>
+                    <p>Quick tips and advice, as the finest filmmakers sit in the spotlight on 'Filmmakers Therapy Couch'. Best enjoyed with a cup of tea.</p>
+                </div>
+                <div class="images-grid">
+                    <img src="images/passion_image1.jpg" alt="Passion Image 1">
+                    <img src="images/passion_image2.jpg" alt="Passion Image 2">
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Talk Series Section -->
     <section id="talk-series">
         <div class="container">
             <h2>Filmmakers Therapy Couch Talk Series</h2>
             <div class="video-grid">
                 <iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?list=PL4A2-oCL1z-g2F8pWu4Vog9qU6dCn3UgO" 
-                        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" 
                         allowfullscreen></iframe>
             </div>
         </div>
@@ -182,16 +213,12 @@
                     </ul>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Call to Action Section -->
-    <section id="call-to-action" class="call-to-action">
-        <div class="container">
-            <h3>A Call to Action</h3>
-            <p>If you're moved by the prospect of enhancing mental wellness through creativity, if you believe in the power of community and the importance of empathy, this event is for you. Come, be part of a gathering where every conversation, every film, and every moment is a step toward understanding, healing, and empowerment.</p>
-            <p>Connect with Us: If you're a filmmaker, artist, or creative looking to contribute or learn more, we'd love to hear from you. Call us to explore how we can make a difference together.</p>
-            <p>PSA: If the mission of fostering mental wellness through creativity resonates with you, and you're eager to be part of a compassionate community, join us. Let's make this Leap Year a leap forward for mental health awareness and advocacy.</p>
+            <div class="call-to-action">
+                <h3>A Call to Action:</h3>
+                <p>If you're moved by the prospect of enhancing mental wellness through creativity, if you believe in the power of community and the importance of empathy, this event is for you. Come, be part of a gathering where every conversation, every film, and every moment is a step toward understanding, healing, and empowerment.</p>
+                <p>Connect with Us: If you're a filmmaker, artist, or creative looking to contribute or learn more, we'd love to hear from you. Call us to explore how we can make a difference together.</p>
+                <p>PSA: If the mission of fostering mental wellness through creativity resonates with you, and you're eager to be part of a compassionate community, join us. Let's make this Leap Year a leap forward for mental health awareness and advocacy.</p>
+            </div>
         </div>
     </section>
 
@@ -208,19 +235,11 @@
 </footer>
 
 <!-- Load and Initialize JavaScript Libraries -->
-<script src="https://cdn.jsdelivr.net/npm/rellax@1.12.1/rellax.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/responsive-nav@1.0.39/responsive-nav.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.0/lazysizes.min.js" async></script>
 
 <!-- Initialize Scripts after DOM is fully loaded -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Initialize Parallax Scrolling
-        var rellax = new Rellax('.hero', {
-            speed: -3,
-            center: true
-        });
-
         // Initialize Responsive Navigation
         var navToggle = document.querySelector(".nav-toggle");
         var navList = document.querySelector(".nav-list");

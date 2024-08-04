@@ -3,7 +3,7 @@ body {
     margin: 0;
     font-family: 'Source Sans Pro', sans-serif;
     line-height: 1.7;
-    background-color: #121212;
+    background-color: #121212; /* Consistent background color */
     color: #e0e0e0;
     overflow-x: hidden;
 }
@@ -76,22 +76,43 @@ body {
 /* Main Content */
 main.site-content {
     padding: 40px 0;
-    background-color: #121212;
+    background-color: #121212; /* Ensure consistent background color */
+}
+
+/* Section Titles */
+h2 {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 2.5em;
+    font-weight: 600;
+    color: #f4f4f4;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+h3 {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 2em;
+    font-weight: 500;
+    color: #e0e0e0;
+    margin-bottom: 20px;
 }
 
 /* Project Section */
 .projects h2 {
-    font-size: 2em;
-    color: #f4f4f4;
     margin-bottom: 30px;
-    text-align: center;
 }
 
 .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 40px;
-    margin-bottom: 40px;
+    justify-content: space-between;
+}
+
+.grid.two-columns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 .project img {
@@ -102,29 +123,12 @@ main.site-content {
 }
 
 .project h3 {
-    font-size: 1.5em;
-    color: #f4f4f4;
     margin-bottom: 10px;
-    text-align: left;
 }
 
 .project p {
     font-size: 1em;
     color: #d0d0d0;
-    text-align: left;
-}
-
-/* Talk Series Section */
-.video-grid {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-}
-
-#talk-series iframe {
-    max-width: 100%;
-    border-radius: 4px;
 }
 
 /* Donate Banner Section */
@@ -164,7 +168,6 @@ main.site-content {
     background-color: #1e1e1e;
     color: #f4f4f4;
     padding: 40px 20px;
-    text-align: left;
 }
 
 .call-to-action h3 {
@@ -217,11 +220,11 @@ main.site-content {
     }
 
     .grid {
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
 
-    section {
-        padding: 40px 20px;
+    .grid.two-columns {
+        flex-direction: column;
     }
 
     .nav-toggle {
@@ -232,10 +235,6 @@ main.site-content {
         font-size: 1.5em;
         cursor: pointer;
         margin-left: auto;
-    }
-
-    .nav-list.nav-open {
-        display: flex;
     }
 
     .footer-container {
