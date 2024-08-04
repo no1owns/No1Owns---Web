@@ -38,8 +38,14 @@ body {
     background-color: transparent;
 }
 
-.branding img {
-    max-width: 100px;
+.branding {
+    display: block;
+    width: 120px; /* Adjust width as needed */
+    height: 60px; /* Adjust height as needed */
+    background-image: url('images/logo.jpg'); /* Path to your logo */
+    background-size: cover;
+    background-position: top;
+    text-indent: -9999px; /* Hide text if any, keeping only the background image */
 }
 
 .site-nav {
@@ -59,7 +65,9 @@ body {
 .nav-list a {
     color: var(--text-color);
     text-decoration: none;
-    font-size: 1em;
+    font-size: 0.9em; /* Smaller font size */
+    font-weight: 400; /* Lighter font weight */
+    text-transform: uppercase; /* All caps */
     padding: 10px;
     transition: color var(--transition-speed);
 }
@@ -78,6 +86,7 @@ body {
 .nav-toggle {
     display: none;
 }
+
 
 /* Main Content */
 main.site-content {
