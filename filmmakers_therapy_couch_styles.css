@@ -103,6 +103,13 @@ main.site-content {
     margin-bottom: 50px;
 }
 
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-unit);
+    justify-items: center;
+}
+
 .project {
     text-align: center;
 }
@@ -125,7 +132,6 @@ main.site-content {
     font-size: 1em;
     color: #d0d0d0;
 }
-
 /* About Us Section */
 .about-us {
     margin-bottom: 50px;
