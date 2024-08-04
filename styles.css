@@ -10,14 +10,15 @@
     --spacing-unit: 20px;
     --header-footer-padding: 10px;
     --transition-speed: 0.3s;
+    --gradient-start-color: #4b0082; /* Dark Purple */
+    --gradient-end-color: #1c1c2a; /* Blackish Purple */
 }
 
-/* General Styles */
 body {
     margin: 0;
     font-family: var(--body-font);
     line-height: 1.7;
-    background-color: var(--primary-color);
+    background: linear-gradient(to bottom right, var(--gradient-start-color), var(--gradient-end-color));
     color: var(--text-color);
     overflow-x: hidden;
 }
@@ -40,11 +41,13 @@ body {
 
 .branding {
     display: block;
-    width: 120px; /* Adjust width as needed */
-    height: 60px; /* Adjust height as needed */
+    width: 100%; /* Make the width flexible */
+    max-width: 150px; /* Set a max-width */
+    height: auto; /* Keep height auto to maintain aspect ratio */
     background-image: url('images/logo.jpg'); /* Path to your logo */
-    background-size: cover;
+    background-size: contain; /* Scale the image to fit the container */
     background-position: top;
+    background-repeat: no-repeat;
     text-indent: -9999px; /* Hide text if any, keeping only the background image */
 }
 
@@ -87,11 +90,10 @@ body {
     display: none;
 }
 
-
 /* Main Content */
 main.site-content {
     padding: 40px 0;
-    background-color: var(--primary-color);
+    background-color: transparent;
 }
 
 /* Section Titles */
@@ -239,6 +241,102 @@ iframe {
 
 .footer-nav a:hover {
     color: var(--accent-color);
+}
+
+/* Cookie Consent Banner */
+.cookie-consent-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+}
+
+.cookie-consent-banner p {
+    margin: 0;
+    font-size: 1em;
+}
+
+.cookie-consent-banner a {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+.cookie-consent-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-left: 20px;
+    cursor: pointer;
+    font-size: 1em;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.cookie-consent-button:hover {
+    background-color: darken(var(--accent-color), 10%);
+}
+
+/* Popup Styles */
+.call-to-action-popup {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--secondary-color);
+    padding: 40px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1001; /* Ensure it sits above other content */
+}
+
+.call-to-action-popup.active {
+    display: block; /* Display when active */
+}
+
+.close-popup {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    transition: background-color 0.3s ease;
+}
+
+.close-popup:hover {
+    background-color: darken(var(--accent-color), 10%);
+}
+
+.donate-button {
+    display: inline-block;
+    background-color: var(--accent-color);
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.donate-button:hover {
+    background-color: darken(var(--accent-color), 10%);
 }
 
 /* Responsive Styles */
