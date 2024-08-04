@@ -1,9 +1,9 @@
 body {
     margin: 0;
-    font-family: 'Rubik', sans-serif;
+    font-family: 'Roboto', sans-serif;
     line-height: 1.6;
     background-color: #121212;
-    color: #f4f4f4;
+    color: #e0e0e0;
     overflow-x: hidden;
 }
 
@@ -15,7 +15,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #333;
+    position: relative;
 }
 
 .container {
@@ -23,6 +23,9 @@ body {
     width: 100%;
     margin: 0 auto;
     padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .branding img {
@@ -32,6 +35,8 @@ body {
 .site-nav {
     display: flex;
     align-items: center;
+    flex-grow: 1;
+    justify-content: center;
 }
 
 .nav-toggle {
@@ -45,23 +50,22 @@ body {
 
 .nav-list {
     display: flex;
-    gap: 30px;
+    gap: 20px;
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
 .nav-list a {
-    color: #f4f4f4;
+    color: #fff;
     text-decoration: none;
-    font-size: 1.1em;
-    padding: 8px 15px;
-    transition: color 0.3s, background-color 0.3s;
+    font-size: 1em;
+    padding: 10px;
+    transition: background 0.3s;
 }
 
 .nav-list a:hover {
-    color: #000;
-    background-color: #f4f4f4;
+    background-color: #333;
     border-radius: 5px;
 }
 
@@ -69,14 +73,14 @@ body {
     color: #fff;
     text-decoration: none;
     margin: 0 10px;
-    font-size: 1.2em;
+    font-size: 1.5em;
 }
 
 .hero {
     background-color: #181818;
     color: #f4f4f4;
     text-align: center;
-    padding: 100px 20px;
+    padding: 120px 20px;
 }
 
 main.site-content {
@@ -95,15 +99,16 @@ section {
 
 section h2 {
     text-align: center;
-    margin-bottom: 20px;
-    font-size: 2em;
+    margin-bottom: 30px;
+    font-size: 2.5em;
     color: #f4f4f4;
+    font-weight: 500;
 }
 
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    gap: 30px;
 }
 
 .grid.two-columns {
@@ -116,6 +121,12 @@ section h2 {
     border-radius: 8px;
     text-align: center;
     color: #f4f4f4;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.project:hover, .article:hover, .grid div:hover {
+    transform: translateY(-5px);
+    background: #2a2a2a;
 }
 
 .project img, .images-grid img {
@@ -143,6 +154,7 @@ footer.site-footer {
 footer a {
     color: #fff;
     text-decoration: none;
+    font-size: 0.9em;
 }
 
 footer a:hover {
@@ -162,6 +174,10 @@ footer a:hover {
 
     .nav-list.nav-open {
         display: flex;
+    }
+
+    .header-social {
+        margin-top: 15px;
     }
 
     .grid {
