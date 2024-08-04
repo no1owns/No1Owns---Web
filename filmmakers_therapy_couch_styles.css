@@ -95,7 +95,7 @@ main.site-content {
     color: #f4f4f4;
     text-align: center;
     margin-bottom: 40px;
-    text-transform: none; /* Ensure headings are not in all caps */
+    text-transform: capitalize;
 }
 
 /* Project Section */
@@ -178,32 +178,12 @@ main.site-content {
     border-radius: 4px;
 }
 
-/* Talk Series Section */
-.talk-series {
-    margin-bottom: 50px;
-}
-
-.talk-series__content {
-    display: flex;
-    justify-content: center;
-}
-
 /* Donate Banner Section */
 .donate-banner {
     background: var(--accent-color);
     color: #fff;
-    padding: 40px 20px;
+    padding: 40px var(--spacing-unit);
     text-align: center;
-}
-
-.donate-banner h2 {
-    font-size: 2em;
-    margin-bottom: 10px;
-}
-
-.donate-banner p {
-    font-size: 1.2em;
-    margin-bottom: 20px;
 }
 
 .donate-button {
@@ -220,77 +200,16 @@ main.site-content {
     background: #f4f4f4;
 }
 
-/* Empowering Storytellers Section */
-.empowering-storytellers {
-    margin-bottom: 50px;
-}
-
-.highlight-section {
-    background-color: #1e1e1e;
-    color: #f4f4f4;
-    padding: 40px 20px;
-    text-align: center;
-}
-
-/* Artist Development Section */
-.artist-development {
-    margin-bottom: 50px;
-}
-
-.artist-development__content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-unit);
-}
-
-.watch-button {
-    background: var(--accent-color);
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s;
-    display: inline-block;
-    text-align: center;
-}
-
-.watch-button:hover {
-    background: #0056b3;
-}
-
-/* Presentations Section */
-.presentations {
-    margin-bottom: 50px;
-}
-
-.presentations__content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-unit);
-}
-
-/* Events Section */
-.events {
-    margin-bottom: 50px;
-}
-
-.events__content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-unit);
-}
-
-.events__text, .events__features {
-    font-size: 1.1em;
-    color: var(--text-color);
-}
-
+/* Call to Action Section */
 .call-to-action {
     background-color: #1e1e1e;
     color: #f4f4f4;
     padding: 40px 20px;
-    text-align: center;
+}
+
+.call-to-action h3 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
 }
 
 /* Footer */
