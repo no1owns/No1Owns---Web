@@ -10,7 +10,7 @@
     --spacing-unit: 20px;
     --header-footer-padding: 10px;
     --transition-speed: 0.3s;
-    --gradient-start-color: #4b0082; /* Dark Purple */
+    --gradient-start-color: #2c003e; /* Darker Purple */
     --gradient-end-color: #1c1c2a; /* Blackish Purple */
 }
 
@@ -41,9 +41,8 @@ body {
 
 .branding {
     display: block;
-    width: 100%; /* Make the width flexible */
-    max-width: 150px; /* Set a max-width */
-    height: auto; /* Keep height auto to maintain aspect ratio */
+    width: 150px; /* Fixed width for consistent branding */
+    height: 60px; /* Set a height for consistency */
     background-image: url('images/logo.jpg'); /* Path to your logo */
     background-size: contain; /* Scale the image to fit the container */
     background-position: top;
@@ -342,22 +341,26 @@ iframe {
 /* Responsive Styles */
 @media (max-width: 1024px) {
     .grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr; /* Stack elements vertically */
     }
 
     .about-us__content {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Stack images and text vertically */
+    }
+
+    .branding {
+        width: 100px; /* Smaller branding logo on mobile */
     }
 }
 
 @media (max-width: 768px) {
     .nav-list {
-        flex-direction: column;
+        flex-direction: column; /* Stack nav links vertically */
         align-items: center;
     }
 
     .grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Single column layout */
     }
 
     .nav-toggle {
