@@ -32,22 +32,21 @@
 <script src="https://cdn.jsdelivr.net/npm/responsive-nav@1.0.39/responsive-nav.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.0/lazysizes.min.js" async></script>
 
-<!-- Initialize Parallax Scrolling after DOM is fully loaded -->
+<!-- Initialize Scripts after DOM is fully loaded -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // Initialize Parallax Scrolling
         var rellax = new Rellax('.hero', {
             speed: -3,
             center: true
         });
-    });
-</script>
 
-<!-- Initialize Responsive Navigation -->
-<script>
-    var nav = responsiveNav(".site-nav", {
-        animate: true,
-        transition: 284,
-        label: "Menu"
+        // Initialize Responsive Navigation
+        var nav = responsiveNav(".site-nav", {
+            animate: true,
+            transition: 284,
+            label: "Menu"
+        });
     });
 </script>
 
