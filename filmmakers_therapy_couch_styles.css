@@ -108,30 +108,44 @@ main.site-content {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--spacing-unit);
     justify-items: center;
+    align-items: start;
 }
 
 .project {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     text-align: center;
+    background-color: var(--secondary-color);
+    padding: var(--spacing-unit);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .project__image {
     max-width: 100%;
     height: auto;
-    margin-bottom: 20px;
+    margin-bottom: var(--spacing-unit);
     border-radius: 4px;
+    object-fit: cover;
 }
 
 .project__title {
     margin-bottom: 10px;
     font-family: var(--heading-font);
-    font-size: 2em;
+    font-size: 1.5em;
     color: var(--text-color);
 }
 
 .project__description {
     font-size: 1em;
     color: #d0d0d0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 /* About Us Section */
 .about-us {
     margin-bottom: 50px;
