@@ -109,7 +109,7 @@ main.site-content {
 
 .project {
     display: grid;
-    grid-template-rows: 200px auto 1fr; /* Fixed height for image, followed by content */
+    grid-template-rows: 200px auto 1fr;
     text-align: center;
     padding: var(--spacing-unit);
     border-radius: 8px;
@@ -119,8 +119,8 @@ main.site-content {
 
 .project__image {
     width: 100%;
-    height: 200px; /* Consistent image height */
-    object-fit: cover; /* Crop images to fit */
+    height: 200px;
+    object-fit: cover;
     border-radius: 4px;
 }
 
@@ -137,6 +137,34 @@ main.site-content {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* About Us Section */
+.about-us {
+    margin-bottom: 50px;
+    overflow: hidden; /* Prevent content from flowing off the page */
+}
+
+.about-us__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-unit);
+}
+
+.about-us__text {
+    font-size: 1.1em;
+    color: var(--text-color);
+}
+
+.about-us__images {
+    display: flex;
+    gap: var(--spacing-unit);
+    flex-wrap: wrap; /* Ensure images wrap within the container */
+}
+
+.about-us__image {
+    width: 100%;
+    border-radius: 4px;
 }
 
 /* Call to Action Section */
