@@ -95,6 +95,7 @@ main.site-content {
     color: #f4f4f4;
     text-align: center;
     margin-bottom: 40px;
+    text-transform: none; /* Ensure headings are not in all caps */
 }
 
 /* Project Section */
@@ -149,6 +150,147 @@ main.site-content {
 .about-us__image {
     width: 100%;
     border-radius: 4px;
+}
+
+/* Passion Section */
+.passion {
+    margin-bottom: 50px;
+}
+
+.passion__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-unit);
+}
+
+.passion__text {
+    font-size: 1.1em;
+    color: var(--text-color);
+}
+
+.passion__images {
+    display: flex;
+    gap: var(--spacing-unit);
+}
+
+.passion__image {
+    width: 100%;
+    border-radius: 4px;
+}
+
+/* Talk Series Section */
+.talk-series {
+    margin-bottom: 50px;
+}
+
+.talk-series__content {
+    display: flex;
+    justify-content: center;
+}
+
+/* Donate Banner Section */
+.donate-banner {
+    background: var(--accent-color);
+    color: #fff;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.donate-banner h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.donate-banner p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.donate-button {
+    background: #fff;
+    color: var(--accent-color);
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.donate-button:hover {
+    background: #f4f4f4;
+}
+
+/* Empowering Storytellers Section */
+.empowering-storytellers {
+    margin-bottom: 50px;
+}
+
+.highlight-section {
+    background-color: #1e1e1e;
+    color: #f4f4f4;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+/* Artist Development Section */
+.artist-development {
+    margin-bottom: 50px;
+}
+
+.artist-development__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-unit);
+}
+
+.watch-button {
+    background: var(--accent-color);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+    display: inline-block;
+    text-align: center;
+}
+
+.watch-button:hover {
+    background: #0056b3;
+}
+
+/* Presentations Section */
+.presentations {
+    margin-bottom: 50px;
+}
+
+.presentations__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-unit);
+}
+
+/* Events Section */
+.events {
+    margin-bottom: 50px;
+}
+
+.events__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-unit);
+}
+
+.events__text, .events__features {
+    font-size: 1.1em;
+    color: var(--text-color);
+}
+
+.call-to-action {
+    background-color: #1e1e1e;
+    color: #f4f4f4;
+    padding: 40px 20px;
+    text-align: center;
 }
 
 /* Footer */
