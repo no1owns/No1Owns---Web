@@ -88,6 +88,21 @@
         .close-popup:hover {
             background-color: darken(var(--accent-color), 10%);
         }
+
+        .donate-button {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .donate-button:hover {
+            background-color: darken(var(--accent-color), 10%);
+        }
     </style>
 </head>
 <body>
@@ -261,7 +276,7 @@
         <button class="close-popup">&times;</button>
         <h3>Support Our Mission</h3>
         <p>Your support helps us continue our mission to empower storytellers and support mental wellness in the filmmaking community.</p>
-        <a href="donate.html">Donate Now</a>
+        <a href="donate.html" class="donate-button">Donate Now</a>
     </div>
 
 </main>
