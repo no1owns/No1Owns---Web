@@ -39,21 +39,11 @@ body {
     background-color: transparent;
 }
 
-.branding {
-    display: block;
-    width: auto; /* Allow width to be flexible */
-    height: auto; /* Allow height to be flexible */
-    background-image: url('images/logo.jpg'); /* Path to your logo */
-    background-size: contain; /* Scale the image to fit the container */
-    background-position: top;
-    background-repeat: no-repeat;
-    text-indent: -9999px; /* Hide text if any, keeping only the background image */
-}
-
 .site-nav {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
+    flex-grow: 1;
 }
 
 .nav-list {
@@ -67,15 +57,22 @@ body {
 .nav-list a {
     color: var(--text-color);
     text-decoration: none;
-    font-size: 0.9em; /* Smaller font size */
+    font-size: 12px; /* Reduced font size */
     font-weight: 400; /* Lighter font weight */
     text-transform: uppercase; /* All caps */
+    letter-spacing: 1px; /* Increased letter spacing */
     padding: 10px;
     transition: color var(--transition-speed);
 }
 
 .nav-list a:hover {
     color: var(--accent-color);
+}
+
+/* Social Icons */
+.header-social {
+    display: flex;
+    margin-right: var(--spacing-unit);
 }
 
 .header-social a {
@@ -85,8 +82,19 @@ body {
     font-size: 1.2em;
 }
 
-.nav-toggle {
-    display: none;
+/* Branding (Logo) */
+.branding {
+    display: block;
+    margin-left: auto; /* Align logo to the right */
+    width: auto;
+    height: auto;
+    background-image: url('images/logo.jpg'); /* Path to your logo */
+    background-size: contain;
+    background-position: top;
+    background-repeat: no-repeat;
+    text-indent: -9999px; /* Hide text if any, keeping only the background image */
+    min-width: 150px; /* Minimum width for the logo */
+    height: 60px; /* Fixed height to maintain proportion */
 }
 
 /* Main Content */
@@ -123,7 +131,7 @@ main.site-content {
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-    overflow: hidden; /* Prevents overflow */
+    overflow: hidden;
 }
 
 .module img {
