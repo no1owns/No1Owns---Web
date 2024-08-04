@@ -140,6 +140,33 @@ main.site-content {
     text-align: center;
 }
 
+/* About Us Section */
+.about-us__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-unit);
+    align-items: center;
+}
+
+.about-us__text {
+    font-size: 1.1em;
+    color: var(--text-color);
+}
+
+.about-us__images {
+    display: flex;
+    gap: var(--spacing-unit);
+    flex-wrap: wrap;
+}
+
+.about-us__image {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
 /* Passion Section */
 .passion__content {
     display: grid;
@@ -209,6 +236,10 @@ iframe {
 @media (max-width: 1024px) {
     .grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .about-us__content {
+        grid-template-columns: 1fr;
     }
 }
 

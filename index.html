@@ -74,6 +74,19 @@
             right: 10px;
             cursor: pointer;
             font-size: 20px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-popup:hover {
+            background-color: darken(var(--accent-color), 10%);
         }
     </style>
 </head>
@@ -245,7 +258,7 @@
 
     <!-- Call to Action Popup -->
     <div id="cta-popup" class="call-to-action-popup">
-        <span class="close-popup" onclick="closePopup()">&times;</span>
+        <button class="close-popup">&times;</button>
         <h3>Support Our Mission</h3>
         <p>Your support helps us continue our mission to empower storytellers and support mental wellness in the filmmaking community.</p>
         <a href="donate.html">Donate Now</a>
