@@ -10,7 +10,7 @@
     --spacing-unit: 20px;
     --header-footer-padding: 10px;
     --transition-speed: 0.3s;
-    --gradient-start-color: #2c003e; /* Darker Purple */
+    --gradient-start-color: #262635; /* Slightly lighter dark purple */
     --gradient-end-color: #1c1c2a; /* Blackish Purple */
 }
 
@@ -41,8 +41,8 @@ body {
 
 .branding {
     display: block;
-    width: 150px; /* Fixed width for consistent branding */
-    height: 60px; /* Set a height for consistency */
+    width: auto; /* Allow width to be flexible */
+    height: auto; /* Allow height to be flexible */
     background-image: url('images/logo.jpg'); /* Path to your logo */
     background-size: contain; /* Scale the image to fit the container */
     background-position: top;
@@ -349,7 +349,8 @@ iframe {
     }
 
     .branding {
-        width: 100px; /* Smaller branding logo on mobile */
+        width: 100%; /* Allow full width branding on mobile */
+        height: auto;
     }
 }
 
