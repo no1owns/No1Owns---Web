@@ -260,10 +260,17 @@ main.site-content {
     overflow: hidden;
 }
 
-/* Video Section */
+/* Video Gallery Section */
 .video-gallery {
     padding: 40px 0;
     background-color: transparent;
+}
+
+.section-description {
+    font-size: 1.1em;
+    color: var(--text-color);
+    text-align: center;
+    margin-bottom: var(--spacing-unit); /* Adds space between the description and the videos */
 }
 
 .video-grid {
