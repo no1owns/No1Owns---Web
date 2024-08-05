@@ -83,17 +83,19 @@ body {
 /* Branding (Logo) */
 .branding {
     display: block;
-    margin-left: auto; /* Align logo to the right */
-    width: auto;
-    height: auto;
-    background-image: url('images/logo.jpg'); /* Path to your logo */
-    background-size: contain;
-    background-position: top;
-    background-repeat: no-repeat;
+    width: 150px; /* Set width to ensure uniform size */
+    height: 60px; /* Uniform height */
+    overflow: hidden; /* Hide overflow */
     text-indent: -9999px; /* Hide text if any, keeping only the background image */
-    min-width: 150px;
-    height: 60px;
 }
+
+.branding img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Scale logo proportionally and crop if necessary */
+    display: block;
+}
+
 
 /* Mobile Navigation */
 .nav-toggle {
@@ -204,6 +206,7 @@ main.site-content {
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-unit);
     align-items: center;
+    margin-bottom: var(--spacing-unit); /* Reduce vertical space */
 }
 
 .about-us__text {
@@ -212,17 +215,20 @@ main.site-content {
 }
 
 .about-us__images {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Use grid for compact layout */
     gap: var(--spacing-unit);
-    flex-wrap: wrap;
+    align-items: center;
 }
 
 .about-us__image {
     width: 100%;
     height: auto;
     max-width: 100%;
-    object-fit: cover;
+    max-height: 200px; /* Limit the height */
+    object-fit: cover; /* Maintain image proportions */
     border-radius: 4px;
+    overflow: hidden;
 }
 
 /* Passion Section */
