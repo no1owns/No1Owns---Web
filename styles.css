@@ -251,17 +251,21 @@ main.site-content {
 }
 
 /* Video Section */
-.video-grid {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: var(--spacing-unit);
+.video-gallery {
+    padding: 40px 0;
+    background-color: transparent;
 }
 
-iframe {
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-unit);
+    justify-items: center;
+}
+
+.video-grid iframe {
     width: 100%;
-    max-width: 100%;
-    height: 500px;
+    height: 200px;
     border: none;
 }
 
