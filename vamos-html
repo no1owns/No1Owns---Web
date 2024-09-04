@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vamos LLC - Consultancy Recruiting Business</title>
+    
+    <!-- FontAwesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <!-- Inline CSS -->
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #ffffff;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: #0056b3;
+            color: #ffffff;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo img {
+            height: 50px;
+            vertical-align: middle;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-links li {
+            margin: 0 1.5rem;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a i {
+            margin-right: 0.5rem;
+        }
+
+        .nav-links a:hover {
+            color: #ff7f3f;
+        }
+
+        /* Sections */
+        .section {
+            padding: 100px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+
+        h1, h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Lists */
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            display: flex;
+            align-items: center;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        ul li i {
+            margin-right: 0.5rem;
+            color: #0056b3;
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: #ff7f3f;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            margin-top: 1rem;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 30px;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Form Styles */
+        #contact-form input,
+        #contact-form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        #contact-form button {
+            padding: 0.75rem;
+            border: none;
+            background-color: #ff7f3f;
+            color: #ffffff;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #contact-form button i {
+            margin-right: 0.5rem;
+        }
+
+        #contact-form button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333333;
+            color: #ffffff;
+            padding: 1.5rem 0;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav-links {
+                flex-direction: column;
+            }
+
+            .nav-links li {
+                margin: 0.5rem 0;
+            }
+
+            .btn {
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            #contact-form button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container">
+            <!-- Logo with new link -->
+            <a href="#home" class="logo">
+                <img src="https://media.licdn.com/dms/image/v2/C560BAQGswWfHnyWAhg/company-logo_200_200/company-logo_200_200/0/1648582922904/vamos_search_consulting_logo?e=1733356800&v=beta&t=j-xe6G1Wn4uMQcbhR1DXiO2auAY-88nLzimZLQZHG1M" alt="Vamos LLC Logo">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#about"><i class="fas fa-info-circle"></i> About Us</a></li>
+                <li><a href="#services"><i class="fas fa-briefcase"></i> Services</a></li>
+                <li><a href="#resources"><i class="fas fa-book"></i> Resources</a></li>
+                <li><a href="#contact"><i class="fas fa-envelope"></i> Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="section">
+        <div class="container">
+            <h1>Welcome to Vamos LLC</h1>
+            <p>Empowering Businesses through Diverse Talent and Equitable Practices</p>
+            <a href="#contact" class="btn"><i class="fas fa-phone-alt"></i> Get in Touch</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2>About Us</h2>
+            <p>Vamos LLC is dedicated to recruiting diverse talent, developing clients, and promoting professional development through equitable practices and diversity. Our mission is to empower businesses to thrive in a diverse and inclusive environment.</p>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section">
+        <div class="container">
+            <h2>Our Services</h2>
+            <ul>
+                <li><i class="fas fa-user-check"></i> Recruitment Services</li>
+                <li><i class="fas fa-chart-line"></i> Client Development</li>
+                <li><i class="fas fa-chalkboard-teacher"></i> Professional Development Workshops</li>
+                <li><i class="fas fa-balance-scale"></i> Equitable Practices Consulting</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section id="resources" class="section">
+        <div class="container">
+            <h2>Resources</h2>
+            <p>Explore our blog, case studies, and whitepapers on recruitment best practices, DEI, and professional development.</p>
+            <a href="#" class="btn"><i class="fas fa-book-open"></i> Learn More</a>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <p>Have questions or need more information? Get in touch with us.</p>
+            <form id="contact-form">
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea placeholder="Your Message" required></textarea>
+                <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Vamos LLC. All Rights Reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
