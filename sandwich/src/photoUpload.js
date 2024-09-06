@@ -94,9 +94,10 @@ document.getElementById('photo-upload-form').addEventListener('submit', async (e
     .from('sandwiches')
     .insert([{ name, photo_url: photoUrl, description, type }]);
 
+  console.log('Insert response:', { data: sandwichData, error: insertError });
+
   if (insertError) {
     console.error('Error saving sandwich:', insertError.message);
-    console.error('Detailed error:', insertError); // Log full error details
     alert(`Error saving sandwich: ${insertError.message}`);
   } else {
     console.log('Sandwich saved:', sandwichData);
