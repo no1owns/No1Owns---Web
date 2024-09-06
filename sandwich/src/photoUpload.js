@@ -54,6 +54,8 @@ document.getElementById('photo-upload-form').addEventListener('submit', async (e
     }
 
     // Save the photo URL, name, description, and type to the sandwiches table
+    console.log('Inserting data:', { name, photo_url: photoUrl, description, type });
+
     const { data: sandwichData, error: insertError } = await supabase
       .from('sandwiches')
       .insert([{ name, photo_url: photoUrl, description, type }]);
