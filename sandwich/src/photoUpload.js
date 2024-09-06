@@ -57,11 +57,14 @@ document.getElementById('photo-upload-form').addEventListener('submit', async (e
 
     if (insertError) {
       console.error('Error saving sandwich:', insertError.message);
+      alert(`Error saving sandwich: ${insertError.message}`);
     } else {
       console.log('Sandwich saved:', sandwichData);
       // Refresh the sandwich list
       await fetchSandwiches();
     }
+  } else {
+    console.error('Form fields are missing or invalid.');
   }
 });
 
