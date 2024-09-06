@@ -17,6 +17,7 @@ document.getElementById('photo-upload-form').addEventListener('submit', async (e
     const fileName = `${Date.now()}-${file.name}`; // Ensure unique file names
 
     console.log('Uploading file:', fileName);
+    console.log('File details:', file);
 
     // Upload the file
     const { data: uploadData, error: uploadError } = await supabase.storage
@@ -25,6 +26,7 @@ document.getElementById('photo-upload-form').addEventListener('submit', async (e
 
     if (uploadError) {
       console.error('Error uploading photo:', uploadError.message);
+      console.error('Full upload error details:', uploadError);
       return;
     }
 
@@ -37,6 +39,7 @@ document.getElementById('photo-upload-form').addEventListener('submit', async (e
 
     if (urlError) {
       console.error('Error getting public URL:', urlError.message);
+      console.error('Full URL error details:', urlError);
       return;
     }
 
@@ -57,6 +60,7 @@ document.getElementById('photo-upload-form').addEventListener('submit', async (e
 
     if (insertError) {
       console.error('Error saving sandwich:', insertError.message);
+      console.error('Full insert error details:', insertError);
       alert(`Error saving sandwich: ${insertError.message}`);
     } else {
       console.log('Sandwich saved:', sandwichData);
@@ -76,6 +80,7 @@ async function fetchSandwiches() {
 
   if (error) {
     console.error('Error fetching sandwiches:', error.message);
+    console.error('Full fetch error details:', error);
   } else {
     console.log('Sandwiches fetched:', data);
     displaySandwiches(data);
