@@ -1204,18 +1204,20 @@ function makeEditorSelect(labelText, options, labelFn, currentValue, onChange) {
 let dragSrcStep = null;
 
 function onStepDragStart(e, stepId) {
+  if (!e.target.closest('.drag-handle')) { e.preventDefault(); return; }
   dragSrcStep = stepId;
   e.dataTransfer.effectAllowed = 'move';
   e.currentTarget.classList.add('dragging');
 }
 
 function onStepDragEnd(e) {
+  dragSrcStep = null;
   e.currentTarget.classList.remove('dragging');
   document.querySelectorAll('.step-card').forEach(el => el.classList.remove('drag-over'));
 }
 
 function onStepDragOver(e, stepId) {
-  if (dragSrcStep === stepId) return;
+  if (dragSrcStep === null || dragSrcStep === stepId) return;
   e.preventDefault();
   e.dataTransfer.dropEffect = 'move';
   document.querySelectorAll('.step-card').forEach(el => el.classList.remove('drag-over'));
@@ -1243,6 +1245,7 @@ let dragSrcField = null;
 let dragSrcFieldStep = null;
 
 function onFieldDragStart(e, stepId, fieldId) {
+  if (!e.target.closest('.field-drag-handle')) { e.preventDefault(); return; }
   dragSrcField = fieldId;
   dragSrcFieldStep = stepId;
   e.dataTransfer.effectAllowed = 'move';
@@ -1251,12 +1254,14 @@ function onFieldDragStart(e, stepId, fieldId) {
 }
 
 function onFieldDragEnd(e) {
+  dragSrcField = null;
+  dragSrcFieldStep = null;
   e.currentTarget.classList.remove('dragging');
   document.querySelectorAll('.field-card').forEach(el => el.classList.remove('drag-over'));
 }
 
 function onFieldDragOver(e, stepId, fieldId) {
-  if (dragSrcField === fieldId) return;
+  if (dragSrcField === null || dragSrcField === fieldId) return;
   e.preventDefault();
   e.stopPropagation();
   document.querySelectorAll('.field-card').forEach(el => el.classList.remove('drag-over'));
