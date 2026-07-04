@@ -403,6 +403,8 @@ const DESTINATIONS = [
   { id: 'custom',    icon: '↗', name: 'Custom Endpoint', desc: 'POST to any URL — full control over method' },
 ];
 
+const STORAGE_KEY = 'mfg_config_v1';
+
 /* ── State ── */
 const state = {
   steps: [],
@@ -432,6 +434,9 @@ const backLabelInput      = document.getElementById('backLabel');
 const submitLabelInput    = document.getElementById('submitLabel');
 const previewContainer    = document.getElementById('previewContainer');
 const copyHtmlBtn         = document.getElementById('copyHtmlBtn');
+const exportConfigBtn     = document.getElementById('exportConfigBtn');
+const importConfigBtn     = document.getElementById('importConfigBtn');
+const importConfigFile    = document.getElementById('importConfigFile');
 const resetBtn            = document.getElementById('resetBtn');
 const statusLabel         = document.getElementById('statusLabel');
 const fieldTypeModal      = document.getElementById('fieldTypeModal');
@@ -458,6 +463,7 @@ let pendingAddFieldStepId = null;
 let statusTimeout = null;
 let editingStepId = null;
 let editingFieldId = null;
+let saveTimer = null;
 
 /* ── Helpers ── */
 function uid() { return state.nextFieldId++; }
@@ -496,6 +502,63 @@ function getFieldsBefore(targetFieldId) {
   return result;
 }
 
+/* ── Config persistence ── */
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveToLocalStorage, 500);
+}
+
+function saveToLocalStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      version: 1,
+      steps: state.steps,
+      nextStepId: state.nextStepId,
+      nextFieldId: state.nextFieldId,
+      settings: { ...state.settings },
+      labels: {
+        next: nextLabelInput.value,
+        back: backLabelInput.value,
+        submit: submitLabelInput.value,
+      },
+    }));
+  } catch (_) {}
+}
+
+function restoreFromData(data) {
+  state.steps = data.steps || [];
+  state.nextStepId = data.nextStepId || 1;
+  state.nextFieldId = data.nextFieldId || 1;
+  state.previewStep = 0;
+  state.mobileBuilderStep = 0;
+  if (data.settings) Object.assign(state.settings, data.settings);
+  if (data.labels) {
+    nextLabelInput.value   = data.labels.next   || 'Next';
+    backLabelInput.value   = data.labels.back   || 'Back';
+    submitLabelInput.value = data.labels.submit || 'Submit';
+  }
+  successMessageInput.value = state.settings.successMessage || 'Thank you!';
+  progressStyleGrid.querySelectorAll('.progress-style-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.style === state.settings.progressStyle));
+  buildLanguageSelect();
+  previewContainer.dir = getLang().dir;
+  buildDestinationPicker();
+  buildDestinationConfig();
+  renderBuilder();
+  renderPreview();
+}
+
+function loadFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (!data || !Array.isArray(data.steps)) return false;
+    restoreFromData(data);
+    return true;
+  } catch (_) { return false; }
+}
+
 /* ── Data Destination ── */
 function buildDestinationPicker() {
   destinationPicker.innerHTML = '';
@@ -515,6 +578,7 @@ function setDestination(id) {
   destinationPicker.querySelectorAll('.destination-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.dest === id));
   buildDestinationConfig();
+  scheduleSave();
 }
 
 function makeDestField(labelText, inputType, settingKey, placeholder, helpText) {
@@ -528,7 +592,7 @@ function makeDestField(labelText, inputType, settingKey, placeholder, helpText) 
   inp.className = 'input';
   inp.placeholder = placeholder;
   inp.value = state.settings[settingKey] || '';
-  inp.addEventListener('input', e => { state.settings[settingKey] = e.target.value; });
+  inp.addEventListener('input', e => { state.settings[settingKey] = e.target.value; scheduleSave(); });
   lbl.appendChild(inp);
   wrap.appendChild(lbl);
   if (helpText) {
@@ -557,6 +621,7 @@ function makeMethodToggle() {
       state.settings.formMethod = m;
       toggle.querySelectorAll('.method-btn').forEach(b =>
         b.classList.toggle('active', b.dataset.method === m));
+      scheduleSave();
     });
     toggle.appendChild(btn);
   });
@@ -650,6 +715,7 @@ function loadTemplate(tpl) {
   closeTemplatesModal();
   renderBuilder();
   renderPreview();
+  scheduleSave();
   showStatus(`"${tpl.name}" loaded`);
 }
 
@@ -728,6 +794,7 @@ function addStep() {
   state.mobileBuilderStep = state.steps.length - 1;
   renderBuilder();
   renderPreview();
+  scheduleSave();
 }
 
 function deleteStep(stepId) {
@@ -740,6 +807,7 @@ function deleteStep(stepId) {
   }
   renderBuilder();
   renderPreview();
+  scheduleSave();
 }
 
 function renameStep(stepId, name) {
@@ -749,6 +817,7 @@ function renameStep(stepId, name) {
   const idx = state.steps.findIndex(s => s.id === stepId);
   const tabs = stepTabsBar.querySelectorAll('.step-tab:not(.step-tab-add)');
   if (tabs[idx]) tabs[idx].textContent = name || `Step ${idx + 1}`;
+  scheduleSave();
 }
 
 function toggleCollapse(stepId) {
@@ -791,6 +860,7 @@ function addField(stepId, type) {
   step.fields.push(field);
   renderBuilder();
   renderPreview();
+  scheduleSave();
   openFieldEditor(stepId, field.id);
 }
 
@@ -800,6 +870,7 @@ function deleteField(stepId, fieldId) {
   if (editingFieldId === fieldId) closeFieldEditor();
   renderBuilder();
   renderPreview();
+  scheduleSave();
 }
 
 function addOption(stepId, fieldId) {
@@ -808,6 +879,7 @@ function addOption(stepId, fieldId) {
     field.options.push(`Option ${field.options.length + 1}`);
     renderEditorOptions(stepId, fieldId);
     renderPreview();
+    scheduleSave();
   }
 }
 
@@ -817,6 +889,7 @@ function removeOption(stepId, fieldId, idx) {
     field.options.splice(idx, 1);
     renderEditorOptions(stepId, fieldId);
     renderPreview();
+    scheduleSave();
   }
 }
 
@@ -825,6 +898,7 @@ function updateOption(stepId, fieldId, idx, value) {
   if (field) {
     field.options[idx] = value;
     renderPreview();
+    scheduleSave();
   }
 }
 
@@ -966,7 +1040,7 @@ function makeEditorText(labelText, currentValue, placeholder, onChange) {
   inp.className = 'input';
   inp.value = currentValue;
   inp.placeholder = placeholder;
-  inp.addEventListener('input', e => onChange(e.target.value));
+  inp.addEventListener('input', e => { onChange(e.target.value); scheduleSave(); });
 
   group.appendChild(lbl);
   group.appendChild(inp);
@@ -988,7 +1062,7 @@ function makeEditorToggle(labelText, currentValue, onChange) {
   inp.className = 'toggle-checkbox';
   inp.id = id;
   inp.checked = currentValue;
-  inp.addEventListener('change', e => onChange(e.target.checked));
+  inp.addEventListener('change', e => { onChange(e.target.checked); scheduleSave(); });
 
   group.appendChild(lbl);
   group.appendChild(inp);
@@ -1092,11 +1166,12 @@ function makeConditionSection(stepId, fieldId) {
     }
     renderPreview();
     renderBuilder();
+    scheduleSave();
   });
 
-  srcSel.addEventListener('change', () => { syncCondition(); renderPreview(); });
-  opSel.addEventListener('change', () => { syncCondition(); renderPreview(); });
-  valInp.addEventListener('input', () => { syncCondition(); renderPreview(); });
+  srcSel.addEventListener('change', () => { syncCondition(); renderPreview(); scheduleSave(); });
+  opSel.addEventListener('change', () => { syncCondition(); renderPreview(); scheduleSave(); });
+  valInp.addEventListener('input', () => { syncCondition(); renderPreview(); scheduleSave(); });
 
   return section;
 }
@@ -1118,7 +1193,7 @@ function makeEditorSelect(labelText, options, labelFn, currentValue, onChange) {
     o.selected = opt === currentValue;
     sel.appendChild(o);
   });
-  sel.addEventListener('change', e => onChange(e.target.value));
+  sel.addEventListener('change', e => { onChange(e.target.value); scheduleSave(); });
 
   group.appendChild(lbl);
   group.appendChild(sel);
@@ -1160,6 +1235,7 @@ function onStepDrop(e, targetStepId) {
   else if (fromIdx > toIdx && state.previewStep >= toIdx && state.previewStep < fromIdx) state.previewStep++;
   renderBuilder();
   renderPreview();
+  scheduleSave();
 }
 
 /* ── Drag and drop (fields) ── */
@@ -1200,6 +1276,7 @@ function onFieldDrop(e, stepId, targetFieldId) {
   step.fields.splice(toIdx, 0, moved);
   renderBuilder();
   renderPreview();
+  scheduleSave();
 }
 
 /* ── Builder render ── */
@@ -2122,10 +2199,11 @@ progressStyleGrid.querySelectorAll('.progress-style-btn').forEach(btn => {
     progressStyleGrid.querySelectorAll('.progress-style-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     renderPreview();
+    scheduleSave();
   });
 });
 
-successMessageInput.addEventListener('input', e => { state.settings.successMessage = e.target.value; });
+successMessageInput.addEventListener('input', e => { state.settings.successMessage = e.target.value; scheduleSave(); });
 
 function buildLanguageSelect() {
   formLanguageSelect.innerHTML = '';
@@ -2148,6 +2226,7 @@ function applyLanguage(code) {
   state.settings.successMessage     = lang.success;
   previewContainer.dir = lang.dir;
   renderPreview();
+  scheduleSave();
 }
 
 formLanguageSelect.addEventListener('change', e => applyLanguage(e.target.value));
@@ -2172,8 +2251,52 @@ copyHtmlBtn.addEventListener('click', () => {
   });
 });
 
+exportConfigBtn.addEventListener('click', () => {
+  const data = {
+    version: 1,
+    steps: state.steps,
+    nextStepId: state.nextStepId,
+    nextFieldId: state.nextFieldId,
+    settings: { ...state.settings },
+    labels: {
+      next: nextLabelInput.value,
+      back: backLabelInput.value,
+      submit: submitLabelInput.value,
+    },
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'form-config.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showStatus('Config exported!');
+});
+
+importConfigBtn.addEventListener('click', () => importConfigFile.click());
+
+importConfigFile.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data || !Array.isArray(data.steps)) { showStatus('Invalid config file.'); return; }
+      restoreFromData(data);
+      saveToLocalStorage();
+      showStatus('Config imported!');
+    } catch (_) { showStatus('Invalid config file.'); }
+    importConfigFile.value = '';
+  };
+  reader.readAsText(file);
+});
+
 resetBtn.addEventListener('click', () => {
   if (confirm('Reset everything? This will clear all steps and fields.')) {
+    clearTimeout(saveTimer);
+    localStorage.removeItem(STORAGE_KEY);
     state.steps = [];
     state.previewStep = 0;
     state.mobileBuilderStep = 0;
@@ -2205,7 +2328,7 @@ resetBtn.addEventListener('click', () => {
 });
 
 [nextLabelInput, backLabelInput, submitLabelInput].forEach(el => {
-  el.addEventListener('input', renderPreview);
+  el.addEventListener('input', () => { renderPreview(); scheduleSave(); });
 });
 
 /* ── Mobile tabs ── */
@@ -2225,10 +2348,12 @@ mobileTabs.forEach(tab => {
 /* ── Init ── */
 previewContainer.addEventListener('change', evaluatePreviewConditions);
 previewContainer.addEventListener('input', evaluatePreviewConditions);
-buildLanguageSelect();
-buildDestinationPicker();
-buildDestinationConfig();
 buildTemplatesModal();
 buildFieldTypeModal();
 setMobileTab('builder');
-addStep();
+if (!loadFromLocalStorage()) {
+  buildLanguageSelect();
+  buildDestinationPicker();
+  buildDestinationConfig();
+  addStep();
+}

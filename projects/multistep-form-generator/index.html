@@ -83,10 +83,13 @@
 
   <footer class="bottom-bar">
     <button class="btn btn-accent" id="copyHtmlBtn">Copy HTML</button>
+    <button class="btn btn-ghost" id="exportConfigBtn">Export Config</button>
+    <button class="btn btn-ghost" id="importConfigBtn">Import Config</button>
     <button class="btn btn-ghost" id="templatesBtn">Templates</button>
     <button class="btn btn-ghost" id="resetBtn">Reset</button>
     <span class="status-label" id="statusLabel"></span>
   </footer>
+  <input type="file" id="importConfigFile" accept=".json" style="display:none" />
 
   <!-- Templates picker -->
   <div class="templates-modal hidden" id="templatesModal" role="dialog" aria-modal="true" aria-label="Choose a template">
