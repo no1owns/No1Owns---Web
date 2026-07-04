@@ -1,4 +1,4 @@
-# Multistep Form Generator
+# Form Studio
 
 A browser-based tool for building, previewing, and exporting clean multistep HTML forms — no code, no backend, no dependencies.
 
