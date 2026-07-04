@@ -1606,13 +1606,13 @@ function renderPreview() {
       const nextBtn = document.createElement('button');
       nextBtn.className = 'preview-btn-next';
       nextBtn.textContent = nextLabel;
-      nextBtn.addEventListener('click', () => goPreviewStep(idx + 1));
+      nextBtn.addEventListener('click', () => { if (validatePreviewStep(idx)) goPreviewStep(idx + 1); });
       nav.appendChild(nextBtn);
     } else {
       const submitBtn = document.createElement('button');
       submitBtn.className = 'preview-btn-submit';
       submitBtn.textContent = submitLabel;
-      submitBtn.addEventListener('click', () => showPreviewSuccess(wrap));
+      submitBtn.addEventListener('click', () => { if (validatePreviewStep(idx)) showPreviewSuccess(wrap); });
       nav.appendChild(submitBtn);
     }
 
@@ -1634,7 +1634,12 @@ function getPreviewFieldValue(fieldId) {
   const checkedRadio = el.querySelector('input[type="radio"]:checked');
   if (checkedRadio) return checkedRadio.value;
   const checked = [...el.querySelectorAll('input[type="checkbox"]:checked')].map(e => e.value);
-  return checked.join(',');
+  if (checked.length) return checked.join(',');
+  const activeStars = el.querySelectorAll('.preview-star.active');
+  if (el.querySelector('.preview-star')) return String(activeStars.length);
+  const slider = el.querySelector('input[type="range"]');
+  if (slider) return slider.value;
+  return '';
 }
 
 function evaluatePreviewConditions() {
@@ -1653,6 +1658,90 @@ function evaluatePreviewConditions() {
       group.style.display = show ? '' : 'none';
     });
   });
+}
+
+function showPreviewFieldError(fieldId, msg) {
+  const group = previewContainer.querySelector(`[data-preview-field-group="${fieldId}"]`);
+  if (!group) return;
+  group.classList.add('preview-group-err');
+  let errEl = group.querySelector('.preview-err-msg');
+  if (!errEl) {
+    errEl = document.createElement('p');
+    errEl.className = 'preview-err-msg';
+    group.appendChild(errEl);
+  }
+  errEl.textContent = msg;
+}
+
+function clearPreviewFieldError(fieldId) {
+  const group = previewContainer.querySelector(`[data-preview-field-group="${fieldId}"]`);
+  if (!group) return;
+  group.classList.remove('preview-group-err');
+  group.querySelector('.preview-err-msg')?.remove();
+}
+
+function clearNearestPreviewError(e) {
+  const group = e.target.closest('[data-preview-field-group]');
+  if (!group) return;
+  group.classList.remove('preview-group-err');
+  group.querySelector('.preview-err-msg')?.remove();
+}
+
+function validatePreviewStep(stepIdx) {
+  const step = state.steps[stepIdx];
+  if (!step) return true;
+  const lang = getLang();
+  let valid = true;
+  let firstErrGroup = null;
+
+  step.fields.forEach(field => {
+    if (typeDef(field.type).isContent) return;
+    const group = previewContainer.querySelector(`[data-preview-field-group="${field.id}"]`);
+    if (!group || group.style.display === 'none') return;
+
+    clearPreviewFieldError(field.id);
+
+    const inputEl = previewContainer.querySelector(`[data-preview-input="${field.id}"]`);
+    if (!inputEl) return;
+
+    let isEmpty = false;
+    if (inputEl.tagName === 'SELECT') {
+      isEmpty = !inputEl.value;
+    } else if (inputEl.tagName === 'TEXTAREA') {
+      isEmpty = !inputEl.value.trim();
+    } else if (inputEl.tagName === 'INPUT') {
+      isEmpty = !inputEl.value.trim();
+    } else {
+      if (inputEl.querySelector('.preview-yesno-btn')) {
+        isEmpty = !inputEl.querySelector('.preview-yesno-btn.selected');
+      } else if (inputEl.querySelector('input[type="radio"]')) {
+        isEmpty = !inputEl.querySelector('input[type="radio"]:checked');
+      } else if (inputEl.querySelector('input[type="checkbox"]')) {
+        isEmpty = !inputEl.querySelector('input[type="checkbox"]:checked');
+      } else if (inputEl.querySelector('.preview-star')) {
+        isEmpty = inputEl.querySelectorAll('.preview-star.active').length === 0;
+      }
+      // scale slider always has a value → isEmpty stays false
+    }
+
+    if (field.required && isEmpty) {
+      showPreviewFieldError(field.id, lang.required);
+      valid = false;
+      if (!firstErrGroup) firstErrGroup = group;
+      return;
+    }
+
+    if (!isEmpty && inputEl.tagName === 'INPUT' && field.type === 'email') {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputEl.value.trim())) {
+        showPreviewFieldError(field.id, 'Please enter a valid email address.');
+        valid = false;
+        if (!firstErrGroup) firstErrGroup = group;
+      }
+    }
+  });
+
+  if (firstErrGroup) firstErrGroup.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  return valid;
 }
 
 function buildPreviewField(field) {
@@ -2353,6 +2442,9 @@ mobileTabs.forEach(tab => {
 /* ── Init ── */
 previewContainer.addEventListener('change', evaluatePreviewConditions);
 previewContainer.addEventListener('input', evaluatePreviewConditions);
+previewContainer.addEventListener('input',  clearNearestPreviewError);
+previewContainer.addEventListener('change', clearNearestPreviewError);
+previewContainer.addEventListener('click',  clearNearestPreviewError);
 buildTemplatesModal();
 buildFieldTypeModal();
 setMobileTab('builder');

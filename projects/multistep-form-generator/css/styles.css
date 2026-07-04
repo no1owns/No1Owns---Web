@@ -614,6 +614,12 @@ select.input {
 
 .preview-step.active {
   display: block;
+  animation: previewStepIn 0.18s ease;
+}
+
+@keyframes previewStepIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .preview-field-group {
@@ -626,6 +632,20 @@ select.input {
   font-weight: 500;
   color: var(--text-primary);
   margin-bottom: 6px;
+}
+
+.preview-field-group.preview-group-err > .preview-field-label {
+  color: var(--danger);
+}
+
+.preview-field-group.preview-group-err .preview-input {
+  border-color: var(--danger);
+}
+
+.preview-err-msg {
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: 4px;
 }
 
 .required-star {
