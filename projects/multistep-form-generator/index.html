@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Multistep Form Generator — Forge HQ</title>
+  <title>Form Studio — Forge HQ</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.svg">
+  <link rel="shortcut icon" href="favicon.svg">
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <header class="app-header">
     <div class="header-left">
-      <h1 class="app-title">Multistep Form Generator</h1>
+      <h1 class="app-title">Form Studio</h1>
       <p class="app-subtitle">Build, preview, and export clean multistep forms — no code required.</p>
     </div>
   </header>
@@ -83,10 +86,13 @@
 
   <footer class="bottom-bar">
     <button class="btn btn-accent" id="copyHtmlBtn">Copy HTML</button>
+    <button class="btn btn-ghost" id="exportConfigBtn">Export Config</button>
+    <button class="btn btn-ghost" id="importConfigBtn">Import Config</button>
     <button class="btn btn-ghost" id="templatesBtn">Templates</button>
     <button class="btn btn-ghost" id="resetBtn">Reset</button>
     <span class="status-label" id="statusLabel"></span>
   </footer>
+  <input type="file" id="importConfigFile" accept=".json" style="display:none" />
 
   <!-- Templates picker -->
   <div class="templates-modal hidden" id="templatesModal" role="dialog" aria-modal="true" aria-label="Choose a template">

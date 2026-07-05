@@ -36,6 +36,15 @@ const FIELD_DEFAULTS = {
   scale:    { options: ['1', '10', '', ''] },
 };
 
+const TYPE_PATTERNS = {
+  email:  { pattern: '^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$',  error: 'Please enter a valid email address.' },
+  phone:  { pattern: '^[+]?[\\d\\s\\-().]{7,}$',         error: 'Please enter a valid phone number.' },
+  url:    { pattern: '^https?:\\/\\/.+',                  error: 'Please enter a valid URL (https://...).' },
+  number: { pattern: '^-?\\d*\\.?\\d+$',                 error: 'Please enter a valid number.' },
+};
+
+const VALIDATABLE_TYPES = new Set(['text', 'textarea', 'email', 'phone', 'number', 'url', 'password']);
+
 const LANGUAGES = [
   { code: 'en', name: 'English',           dir: 'ltr', next: 'Next',        back: 'Back',      submit: 'Submit',     success: 'Thank you!',             required: 'This field is required.',           selectOption: 'Select an option',        selectCountry: 'Select a country'       },
   { code: 'es', name: 'Español',           dir: 'ltr', next: 'Siguiente',   back: 'Atrás',     submit: 'Enviar',     success: '¡Gracias!',              required: 'Este campo es obligatorio.',        selectOption: 'Selecciona una opción',   selectCountry: 'Selecciona un país'     },
@@ -403,6 +412,8 @@ const DESTINATIONS = [
   { id: 'custom',    icon: '↗', name: 'Custom Endpoint', desc: 'POST to any URL — full control over method' },
 ];
 
+const STORAGE_KEY = 'mfg_config_v1';
+
 /* ── State ── */
 const state = {
   steps: [],
@@ -432,6 +443,9 @@ const backLabelInput      = document.getElementById('backLabel');
 const submitLabelInput    = document.getElementById('submitLabel');
 const previewContainer    = document.getElementById('previewContainer');
 const copyHtmlBtn         = document.getElementById('copyHtmlBtn');
+const exportConfigBtn     = document.getElementById('exportConfigBtn');
+const importConfigBtn     = document.getElementById('importConfigBtn');
+const importConfigFile    = document.getElementById('importConfigFile');
 const resetBtn            = document.getElementById('resetBtn');
 const statusLabel         = document.getElementById('statusLabel');
 const fieldTypeModal      = document.getElementById('fieldTypeModal');
@@ -458,6 +472,7 @@ let pendingAddFieldStepId = null;
 let statusTimeout = null;
 let editingStepId = null;
 let editingFieldId = null;
+let saveTimer = null;
 
 /* ── Helpers ── */
 function uid() { return state.nextFieldId++; }
@@ -496,6 +511,63 @@ function getFieldsBefore(targetFieldId) {
   return result;
 }
 
+/* ── Config persistence ── */
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveToLocalStorage, 500);
+}
+
+function saveToLocalStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      version: 1,
+      steps: state.steps,
+      nextStepId: state.nextStepId,
+      nextFieldId: state.nextFieldId,
+      settings: { ...state.settings },
+      labels: {
+        next: nextLabelInput.value,
+        back: backLabelInput.value,
+        submit: submitLabelInput.value,
+      },
+    }));
+  } catch (_) {}
+}
+
+function restoreFromData(data) {
+  state.steps = data.steps || [];
+  state.nextStepId = data.nextStepId || 1;
+  state.nextFieldId = data.nextFieldId || 1;
+  state.previewStep = 0;
+  state.mobileBuilderStep = 0;
+  if (data.settings) Object.assign(state.settings, data.settings);
+  if (data.labels) {
+    nextLabelInput.value   = data.labels.next   || 'Next';
+    backLabelInput.value   = data.labels.back   || 'Back';
+    submitLabelInput.value = data.labels.submit || 'Submit';
+  }
+  successMessageInput.value = state.settings.successMessage || 'Thank you!';
+  progressStyleGrid.querySelectorAll('.progress-style-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.style === state.settings.progressStyle));
+  buildLanguageSelect();
+  previewContainer.dir = getLang().dir;
+  buildDestinationPicker();
+  buildDestinationConfig();
+  renderBuilder();
+  renderPreview();
+}
+
+function loadFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (!data || !Array.isArray(data.steps)) return false;
+    restoreFromData(data);
+    return true;
+  } catch (_) { return false; }
+}
+
 /* ── Data Destination ── */
 function buildDestinationPicker() {
   destinationPicker.innerHTML = '';
@@ -515,6 +587,7 @@ function setDestination(id) {
   destinationPicker.querySelectorAll('.destination-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.dest === id));
   buildDestinationConfig();
+  scheduleSave();
 }
 
 function makeDestField(labelText, inputType, settingKey, placeholder, helpText) {
@@ -528,7 +601,7 @@ function makeDestField(labelText, inputType, settingKey, placeholder, helpText) 
   inp.className = 'input';
   inp.placeholder = placeholder;
   inp.value = state.settings[settingKey] || '';
-  inp.addEventListener('input', e => { state.settings[settingKey] = e.target.value; });
+  inp.addEventListener('input', e => { state.settings[settingKey] = e.target.value; scheduleSave(); });
   lbl.appendChild(inp);
   wrap.appendChild(lbl);
   if (helpText) {
@@ -557,6 +630,7 @@ function makeMethodToggle() {
       state.settings.formMethod = m;
       toggle.querySelectorAll('.method-btn').forEach(b =>
         b.classList.toggle('active', b.dataset.method === m));
+      scheduleSave();
     });
     toggle.appendChild(btn);
   });
@@ -642,6 +716,8 @@ function loadTemplate(tpl) {
         required: fDef.required || false,
         options: fDef.options ? [...fDef.options] : (defaults.options ? [...defaults.options] : []),
         condition: null,
+        pattern: fDef.pattern || '',
+        patternError: fDef.patternError || '',
       };
     });
     state.steps.push({ id: stepId, name: stepDef.name, collapsed: false, fields });
@@ -650,6 +726,7 @@ function loadTemplate(tpl) {
   closeTemplatesModal();
   renderBuilder();
   renderPreview();
+  scheduleSave();
   showStatus(`"${tpl.name}" loaded`);
 }
 
@@ -728,6 +805,7 @@ function addStep() {
   state.mobileBuilderStep = state.steps.length - 1;
   renderBuilder();
   renderPreview();
+  scheduleSave();
 }
 
 function deleteStep(stepId) {
@@ -740,6 +818,7 @@ function deleteStep(stepId) {
   }
   renderBuilder();
   renderPreview();
+  scheduleSave();
 }
 
 function renameStep(stepId, name) {
@@ -749,6 +828,7 @@ function renameStep(stepId, name) {
   const idx = state.steps.findIndex(s => s.id === stepId);
   const tabs = stepTabsBar.querySelectorAll('.step-tab:not(.step-tab-add)');
   if (tabs[idx]) tabs[idx].textContent = name || `Step ${idx + 1}`;
+  scheduleSave();
 }
 
 function toggleCollapse(stepId) {
@@ -787,10 +867,13 @@ function addField(stepId, type) {
     required: false,
     options: defaults.options ? [...defaults.options] : [],
     condition: null,
+    pattern: '',
+    patternError: '',
   };
   step.fields.push(field);
   renderBuilder();
   renderPreview();
+  scheduleSave();
   openFieldEditor(stepId, field.id);
 }
 
@@ -800,6 +883,7 @@ function deleteField(stepId, fieldId) {
   if (editingFieldId === fieldId) closeFieldEditor();
   renderBuilder();
   renderPreview();
+  scheduleSave();
 }
 
 function addOption(stepId, fieldId) {
@@ -808,6 +892,7 @@ function addOption(stepId, fieldId) {
     field.options.push(`Option ${field.options.length + 1}`);
     renderEditorOptions(stepId, fieldId);
     renderPreview();
+    scheduleSave();
   }
 }
 
@@ -817,6 +902,7 @@ function removeOption(stepId, fieldId, idx) {
     field.options.splice(idx, 1);
     renderEditorOptions(stepId, fieldId);
     renderPreview();
+    scheduleSave();
   }
 }
 
@@ -825,6 +911,7 @@ function updateOption(stepId, fieldId, idx, value) {
   if (field) {
     field.options[idx] = value;
     renderPreview();
+    scheduleSave();
   }
 }
 
@@ -878,6 +965,30 @@ function renderEditorBody(stepId, fieldId) {
       'Required',
       field.required,
       val => { field.required = val; renderPreview(); renderBuilder(); }
+    ));
+  }
+
+  if (VALIDATABLE_TYPES.has(field.type)) {
+    const autoHint = TYPE_PATTERNS[field.type]
+      ? `Auto-validated as ${FIELD_TYPES[field.type].label.toLowerCase()} — override below if needed`
+      : null;
+    if (autoHint) {
+      const hint = document.createElement('p');
+      hint.className = 'validation-auto-hint';
+      hint.textContent = autoHint;
+      fieldEditorBody.appendChild(hint);
+    }
+    fieldEditorBody.appendChild(makeEditorText(
+      'Validation Pattern (optional regex)',
+      field.pattern || '',
+      TYPE_PATTERNS[field.type] ? TYPE_PATTERNS[field.type].pattern : 'e.g. ^\\d{5}$',
+      val => { field.pattern = val; }
+    ));
+    fieldEditorBody.appendChild(makeEditorText(
+      'Validation Error Message',
+      field.patternError || '',
+      TYPE_PATTERNS[field.type] ? TYPE_PATTERNS[field.type].error : 'e.g. Please enter a 5-digit ZIP code',
+      val => { field.patternError = val; }
     ));
   }
 
@@ -966,7 +1077,7 @@ function makeEditorText(labelText, currentValue, placeholder, onChange) {
   inp.className = 'input';
   inp.value = currentValue;
   inp.placeholder = placeholder;
-  inp.addEventListener('input', e => onChange(e.target.value));
+  inp.addEventListener('input', e => { onChange(e.target.value); scheduleSave(); });
 
   group.appendChild(lbl);
   group.appendChild(inp);
@@ -988,7 +1099,7 @@ function makeEditorToggle(labelText, currentValue, onChange) {
   inp.className = 'toggle-checkbox';
   inp.id = id;
   inp.checked = currentValue;
-  inp.addEventListener('change', e => onChange(e.target.checked));
+  inp.addEventListener('change', e => { onChange(e.target.checked); scheduleSave(); });
 
   group.appendChild(lbl);
   group.appendChild(inp);
@@ -1092,11 +1203,12 @@ function makeConditionSection(stepId, fieldId) {
     }
     renderPreview();
     renderBuilder();
+    scheduleSave();
   });
 
-  srcSel.addEventListener('change', () => { syncCondition(); renderPreview(); });
-  opSel.addEventListener('change', () => { syncCondition(); renderPreview(); });
-  valInp.addEventListener('input', () => { syncCondition(); renderPreview(); });
+  srcSel.addEventListener('change', () => { syncCondition(); renderPreview(); scheduleSave(); });
+  opSel.addEventListener('change', () => { syncCondition(); renderPreview(); scheduleSave(); });
+  valInp.addEventListener('input', () => { syncCondition(); renderPreview(); scheduleSave(); });
 
   return section;
 }
@@ -1118,7 +1230,7 @@ function makeEditorSelect(labelText, options, labelFn, currentValue, onChange) {
     o.selected = opt === currentValue;
     sel.appendChild(o);
   });
-  sel.addEventListener('change', e => onChange(e.target.value));
+  sel.addEventListener('change', e => { onChange(e.target.value); scheduleSave(); });
 
   group.appendChild(lbl);
   group.appendChild(sel);
@@ -1129,18 +1241,20 @@ function makeEditorSelect(labelText, options, labelFn, currentValue, onChange) {
 let dragSrcStep = null;
 
 function onStepDragStart(e, stepId) {
+  if (!e.target.closest('.drag-handle')) { e.preventDefault(); return; }
   dragSrcStep = stepId;
   e.dataTransfer.effectAllowed = 'move';
   e.currentTarget.classList.add('dragging');
 }
 
 function onStepDragEnd(e) {
+  dragSrcStep = null;
   e.currentTarget.classList.remove('dragging');
   document.querySelectorAll('.step-card').forEach(el => el.classList.remove('drag-over'));
 }
 
 function onStepDragOver(e, stepId) {
-  if (dragSrcStep === stepId) return;
+  if (dragSrcStep === null || dragSrcStep === stepId) return;
   e.preventDefault();
   e.dataTransfer.dropEffect = 'move';
   document.querySelectorAll('.step-card').forEach(el => el.classList.remove('drag-over'));
@@ -1160,6 +1274,7 @@ function onStepDrop(e, targetStepId) {
   else if (fromIdx > toIdx && state.previewStep >= toIdx && state.previewStep < fromIdx) state.previewStep++;
   renderBuilder();
   renderPreview();
+  scheduleSave();
 }
 
 /* ── Drag and drop (fields) ── */
@@ -1167,6 +1282,7 @@ let dragSrcField = null;
 let dragSrcFieldStep = null;
 
 function onFieldDragStart(e, stepId, fieldId) {
+  if (!e.target.closest('.field-drag-handle')) { e.preventDefault(); return; }
   dragSrcField = fieldId;
   dragSrcFieldStep = stepId;
   e.dataTransfer.effectAllowed = 'move';
@@ -1175,12 +1291,14 @@ function onFieldDragStart(e, stepId, fieldId) {
 }
 
 function onFieldDragEnd(e) {
+  dragSrcField = null;
+  dragSrcFieldStep = null;
   e.currentTarget.classList.remove('dragging');
   document.querySelectorAll('.field-card').forEach(el => el.classList.remove('drag-over'));
 }
 
 function onFieldDragOver(e, stepId, fieldId) {
-  if (dragSrcField === fieldId) return;
+  if (dragSrcField === null || dragSrcField === fieldId) return;
   e.preventDefault();
   e.stopPropagation();
   document.querySelectorAll('.field-card').forEach(el => el.classList.remove('drag-over'));
@@ -1200,6 +1318,7 @@ function onFieldDrop(e, stepId, targetFieldId) {
   step.fields.splice(toIdx, 0, moved);
   renderBuilder();
   renderPreview();
+  scheduleSave();
 }
 
 /* ── Builder render ── */
@@ -1524,13 +1643,13 @@ function renderPreview() {
       const nextBtn = document.createElement('button');
       nextBtn.className = 'preview-btn-next';
       nextBtn.textContent = nextLabel;
-      nextBtn.addEventListener('click', () => goPreviewStep(idx + 1));
+      nextBtn.addEventListener('click', () => { if (validatePreviewStep(idx)) goPreviewStep(idx + 1); });
       nav.appendChild(nextBtn);
     } else {
       const submitBtn = document.createElement('button');
       submitBtn.className = 'preview-btn-submit';
       submitBtn.textContent = submitLabel;
-      submitBtn.addEventListener('click', () => showPreviewSuccess(wrap));
+      submitBtn.addEventListener('click', () => { if (validatePreviewStep(idx)) showPreviewSuccess(wrap); });
       nav.appendChild(submitBtn);
     }
 
@@ -1552,7 +1671,12 @@ function getPreviewFieldValue(fieldId) {
   const checkedRadio = el.querySelector('input[type="radio"]:checked');
   if (checkedRadio) return checkedRadio.value;
   const checked = [...el.querySelectorAll('input[type="checkbox"]:checked')].map(e => e.value);
-  return checked.join(',');
+  if (checked.length) return checked.join(',');
+  const activeStars = el.querySelectorAll('.preview-star.active');
+  if (el.querySelector('.preview-star')) return String(activeStars.length);
+  const slider = el.querySelector('input[type="range"]');
+  if (slider) return slider.value;
+  return '';
 }
 
 function evaluatePreviewConditions() {
@@ -1571,6 +1695,99 @@ function evaluatePreviewConditions() {
       group.style.display = show ? '' : 'none';
     });
   });
+}
+
+function showPreviewFieldError(fieldId, msg) {
+  const group = previewContainer.querySelector(`[data-preview-field-group="${fieldId}"]`);
+  if (!group) return;
+  group.classList.add('preview-group-err');
+  let errEl = group.querySelector('.preview-err-msg');
+  if (!errEl) {
+    errEl = document.createElement('p');
+    errEl.className = 'preview-err-msg';
+    group.appendChild(errEl);
+  }
+  errEl.textContent = msg;
+}
+
+function clearPreviewFieldError(fieldId) {
+  const group = previewContainer.querySelector(`[data-preview-field-group="${fieldId}"]`);
+  if (!group) return;
+  group.classList.remove('preview-group-err');
+  group.querySelector('.preview-err-msg')?.remove();
+}
+
+function clearNearestPreviewError(e) {
+  const group = e.target.closest('[data-preview-field-group]');
+  if (!group) return;
+  group.classList.remove('preview-group-err');
+  group.querySelector('.preview-err-msg')?.remove();
+}
+
+function validatePreviewStep(stepIdx) {
+  const step = state.steps[stepIdx];
+  if (!step) return true;
+  const lang = getLang();
+  let valid = true;
+  let firstErrGroup = null;
+
+  step.fields.forEach(field => {
+    if (typeDef(field.type).isContent) return;
+    const group = previewContainer.querySelector(`[data-preview-field-group="${field.id}"]`);
+    if (!group || group.style.display === 'none') return;
+
+    clearPreviewFieldError(field.id);
+
+    const inputEl = previewContainer.querySelector(`[data-preview-input="${field.id}"]`);
+    if (!inputEl) return;
+
+    let isEmpty = false;
+    if (inputEl.tagName === 'SELECT') {
+      isEmpty = !inputEl.value;
+    } else if (inputEl.tagName === 'TEXTAREA') {
+      isEmpty = !inputEl.value.trim();
+    } else if (inputEl.tagName === 'INPUT') {
+      isEmpty = !inputEl.value.trim();
+    } else {
+      if (inputEl.querySelector('.preview-yesno-btn')) {
+        isEmpty = !inputEl.querySelector('.preview-yesno-btn.selected');
+      } else if (inputEl.querySelector('input[type="radio"]')) {
+        isEmpty = !inputEl.querySelector('input[type="radio"]:checked');
+      } else if (inputEl.querySelector('input[type="checkbox"]')) {
+        isEmpty = !inputEl.querySelector('input[type="checkbox"]:checked');
+      } else if (inputEl.querySelector('.preview-star')) {
+        isEmpty = inputEl.querySelectorAll('.preview-star.active').length === 0;
+      }
+      // scale slider always has a value → isEmpty stays false
+    }
+
+    if (field.required && isEmpty) {
+      showPreviewFieldError(field.id, lang.required);
+      valid = false;
+      if (!firstErrGroup) firstErrGroup = group;
+      return;
+    }
+
+    if (!isEmpty && VALIDATABLE_TYPES.has(field.type)) {
+      const autoP = TYPE_PATTERNS[field.type];
+      const pattern = field.pattern || (autoP ? autoP.pattern : '');
+      const patternError = field.patternError || (autoP ? autoP.error : 'Invalid value.');
+      if (pattern) {
+        const val = (inputEl.tagName === 'INPUT' || inputEl.tagName === 'TEXTAREA')
+          ? inputEl.value.trim() : '';
+        try {
+          if (val && !new RegExp(pattern).test(val)) {
+            showPreviewFieldError(field.id, patternError);
+            valid = false;
+            if (!firstErrGroup) firstErrGroup = group;
+          }
+        } catch (_) {}
+      }
+    }
+  });
+
+  if (firstErrGroup) firstErrGroup.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  return valid;
 }
 
 function buildPreviewField(field) {
@@ -1885,6 +2102,19 @@ ${buildExportHiddenFields()}${stepsHtml}
         el.parentNode.insertBefore(m,el.nextSibling);ok=false;
       }
     });
+    step.querySelectorAll('[data-pattern]').forEach(function(el){
+      if(el.closest('[data-cond-fid]')&&el.closest('[data-cond-fid]').style.display==='none')return;
+      if(!el.value.trim())return;
+      try{
+        if(!new RegExp(el.getAttribute('data-pattern')).test(el.value.trim())){
+          el.classList.add('mfg-err');
+          var m=document.createElement('div');
+          m.className='mfg-err-msg';
+          m.textContent=el.getAttribute('data-pattern-err')||'Invalid value.';
+          el.parentNode.insertBefore(m,el.nextSibling);ok=false;
+        }
+      }catch(e){}
+    });
     return ok;
   }
   window.mfgNext=function(n){if(validate(n))show(n+1);};
@@ -1996,9 +2226,12 @@ function buildFieldHtml(field) {
   }
 
   if (field.type === 'textarea') {
+    const taPatternAttr = field.pattern
+      ? ` data-pattern="${escHtml(field.pattern)}" data-pattern-err="${escHtml(field.patternError || 'Invalid value.')}"`
+      : '';
     return `      <div class="mfg-field-group"${condAttr}${condStyle}>
         <label class="mfg-label" for="${fid}">${label}${star}</label>
-        <textarea id="${fid}" class="mfg-input" placeholder="${ph}"${req}></textarea>
+        <textarea id="${fid}" class="mfg-input" placeholder="${ph}"${req}${taPatternAttr}></textarea>
       </div>`;
   }
 
@@ -2102,9 +2335,15 @@ ${opts}
   const inputType = field.type === 'phone' ? 'tel'
     : field.type === 'time' ? 'time'
     : field.type;
+  const autoP = TYPE_PATTERNS[field.type];
+  const effPattern = field.pattern || (autoP ? autoP.pattern : '');
+  const effError   = field.patternError || (autoP ? autoP.error : 'Invalid value.');
+  const patternAttr = (effPattern && VALIDATABLE_TYPES.has(field.type))
+    ? ` data-pattern="${escHtml(effPattern)}" data-pattern-err="${escHtml(effError)}"`
+    : '';
   return `      <div class="mfg-field-group"${condAttr}${condStyle}>
         <label class="mfg-label" for="${fid}">${label}${star}</label>
-        <input type="${inputType}" id="${fid}" class="mfg-input" placeholder="${ph}" name="${fid}"${req}>
+        <input type="${inputType}" id="${fid}" class="mfg-input" placeholder="${ph}" name="${fid}"${req}${patternAttr}>
       </div>`;
 }
 
@@ -2122,10 +2361,11 @@ progressStyleGrid.querySelectorAll('.progress-style-btn').forEach(btn => {
     progressStyleGrid.querySelectorAll('.progress-style-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     renderPreview();
+    scheduleSave();
   });
 });
 
-successMessageInput.addEventListener('input', e => { state.settings.successMessage = e.target.value; });
+successMessageInput.addEventListener('input', e => { state.settings.successMessage = e.target.value; scheduleSave(); });
 
 function buildLanguageSelect() {
   formLanguageSelect.innerHTML = '';
@@ -2148,6 +2388,7 @@ function applyLanguage(code) {
   state.settings.successMessage     = lang.success;
   previewContainer.dir = lang.dir;
   renderPreview();
+  scheduleSave();
 }
 
 formLanguageSelect.addEventListener('change', e => applyLanguage(e.target.value));
@@ -2172,8 +2413,52 @@ copyHtmlBtn.addEventListener('click', () => {
   });
 });
 
+exportConfigBtn.addEventListener('click', () => {
+  const data = {
+    version: 1,
+    steps: state.steps,
+    nextStepId: state.nextStepId,
+    nextFieldId: state.nextFieldId,
+    settings: { ...state.settings },
+    labels: {
+      next: nextLabelInput.value,
+      back: backLabelInput.value,
+      submit: submitLabelInput.value,
+    },
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'form-config.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showStatus('Config exported!');
+});
+
+importConfigBtn.addEventListener('click', () => importConfigFile.click());
+
+importConfigFile.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data || !Array.isArray(data.steps)) { showStatus('Invalid config file.'); return; }
+      restoreFromData(data);
+      saveToLocalStorage();
+      showStatus('Config imported!');
+    } catch (_) { showStatus('Invalid config file.'); }
+    importConfigFile.value = '';
+  };
+  reader.readAsText(file);
+});
+
 resetBtn.addEventListener('click', () => {
   if (confirm('Reset everything? This will clear all steps and fields.')) {
+    clearTimeout(saveTimer);
+    localStorage.removeItem(STORAGE_KEY);
     state.steps = [];
     state.previewStep = 0;
     state.mobileBuilderStep = 0;
@@ -2205,7 +2490,7 @@ resetBtn.addEventListener('click', () => {
 });
 
 [nextLabelInput, backLabelInput, submitLabelInput].forEach(el => {
-  el.addEventListener('input', renderPreview);
+  el.addEventListener('input', () => { renderPreview(); scheduleSave(); });
 });
 
 /* ── Mobile tabs ── */
@@ -2225,10 +2510,15 @@ mobileTabs.forEach(tab => {
 /* ── Init ── */
 previewContainer.addEventListener('change', evaluatePreviewConditions);
 previewContainer.addEventListener('input', evaluatePreviewConditions);
-buildLanguageSelect();
-buildDestinationPicker();
-buildDestinationConfig();
+previewContainer.addEventListener('input',  clearNearestPreviewError);
+previewContainer.addEventListener('change', clearNearestPreviewError);
+previewContainer.addEventListener('click',  clearNearestPreviewError);
 buildTemplatesModal();
 buildFieldTypeModal();
 setMobileTab('builder');
-addStep();
+if (!loadFromLocalStorage()) {
+  buildLanguageSelect();
+  buildDestinationPicker();
+  buildDestinationConfig();
+  addStep();
+}
