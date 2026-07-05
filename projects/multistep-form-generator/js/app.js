@@ -36,6 +36,15 @@ const FIELD_DEFAULTS = {
   scale:    { options: ['1', '10', '', ''] },
 };
 
+const TYPE_PATTERNS = {
+  email:  { pattern: '^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$',  error: 'Please enter a valid email address.' },
+  phone:  { pattern: '^[+]?[\\d\\s\\-().]{7,}$',         error: 'Please enter a valid phone number.' },
+  url:    { pattern: '^https?:\\/\\/.+',                  error: 'Please enter a valid URL (https://...).' },
+  number: { pattern: '^-?\\d*\\.?\\d+$',                 error: 'Please enter a valid number.' },
+};
+
+const VALIDATABLE_TYPES = new Set(['text', 'textarea', 'email', 'phone', 'number', 'url', 'password']);
+
 const LANGUAGES = [
   { code: 'en', name: 'English',           dir: 'ltr', next: 'Next',        back: 'Back',      submit: 'Submit',     success: 'Thank you!',             required: 'This field is required.',           selectOption: 'Select an option',        selectCountry: 'Select a country'       },
   { code: 'es', name: 'Español',           dir: 'ltr', next: 'Siguiente',   back: 'Atrás',     submit: 'Enviar',     success: '¡Gracias!',              required: 'Este campo es obligatorio.',        selectOption: 'Selecciona una opción',   selectCountry: 'Selecciona un país'     },
@@ -707,6 +716,8 @@ function loadTemplate(tpl) {
         required: fDef.required || false,
         options: fDef.options ? [...fDef.options] : (defaults.options ? [...defaults.options] : []),
         condition: null,
+        pattern: fDef.pattern || '',
+        patternError: fDef.patternError || '',
       };
     });
     state.steps.push({ id: stepId, name: stepDef.name, collapsed: false, fields });
@@ -856,6 +867,8 @@ function addField(stepId, type) {
     required: false,
     options: defaults.options ? [...defaults.options] : [],
     condition: null,
+    pattern: '',
+    patternError: '',
   };
   step.fields.push(field);
   renderBuilder();
@@ -952,6 +965,30 @@ function renderEditorBody(stepId, fieldId) {
       'Required',
       field.required,
       val => { field.required = val; renderPreview(); renderBuilder(); }
+    ));
+  }
+
+  if (VALIDATABLE_TYPES.has(field.type)) {
+    const autoHint = TYPE_PATTERNS[field.type]
+      ? `Auto-validated as ${FIELD_TYPES[field.type].label.toLowerCase()} — override below if needed`
+      : null;
+    if (autoHint) {
+      const hint = document.createElement('p');
+      hint.className = 'validation-auto-hint';
+      hint.textContent = autoHint;
+      fieldEditorBody.appendChild(hint);
+    }
+    fieldEditorBody.appendChild(makeEditorText(
+      'Validation Pattern (optional regex)',
+      field.pattern || '',
+      TYPE_PATTERNS[field.type] ? TYPE_PATTERNS[field.type].pattern : 'e.g. ^\\d{5}$',
+      val => { field.pattern = val; }
+    ));
+    fieldEditorBody.appendChild(makeEditorText(
+      'Validation Error Message',
+      field.patternError || '',
+      TYPE_PATTERNS[field.type] ? TYPE_PATTERNS[field.type].error : 'e.g. Please enter a 5-digit ZIP code',
+      val => { field.patternError = val; }
     ));
   }
 
@@ -1731,11 +1768,20 @@ function validatePreviewStep(stepIdx) {
       return;
     }
 
-    if (!isEmpty && inputEl.tagName === 'INPUT' && field.type === 'email') {
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputEl.value.trim())) {
-        showPreviewFieldError(field.id, 'Please enter a valid email address.');
-        valid = false;
-        if (!firstErrGroup) firstErrGroup = group;
+    if (!isEmpty && VALIDATABLE_TYPES.has(field.type)) {
+      const autoP = TYPE_PATTERNS[field.type];
+      const pattern = field.pattern || (autoP ? autoP.pattern : '');
+      const patternError = field.patternError || (autoP ? autoP.error : 'Invalid value.');
+      if (pattern) {
+        const val = (inputEl.tagName === 'INPUT' || inputEl.tagName === 'TEXTAREA')
+          ? inputEl.value.trim() : '';
+        try {
+          if (val && !new RegExp(pattern).test(val)) {
+            showPreviewFieldError(field.id, patternError);
+            valid = false;
+            if (!firstErrGroup) firstErrGroup = group;
+          }
+        } catch (_) {}
       }
     }
   });
@@ -2056,6 +2102,19 @@ ${buildExportHiddenFields()}${stepsHtml}
         el.parentNode.insertBefore(m,el.nextSibling);ok=false;
       }
     });
+    step.querySelectorAll('[data-pattern]').forEach(function(el){
+      if(el.closest('[data-cond-fid]')&&el.closest('[data-cond-fid]').style.display==='none')return;
+      if(!el.value.trim())return;
+      try{
+        if(!new RegExp(el.getAttribute('data-pattern')).test(el.value.trim())){
+          el.classList.add('mfg-err');
+          var m=document.createElement('div');
+          m.className='mfg-err-msg';
+          m.textContent=el.getAttribute('data-pattern-err')||'Invalid value.';
+          el.parentNode.insertBefore(m,el.nextSibling);ok=false;
+        }
+      }catch(e){}
+    });
     return ok;
   }
   window.mfgNext=function(n){if(validate(n))show(n+1);};
@@ -2167,9 +2226,12 @@ function buildFieldHtml(field) {
   }
 
   if (field.type === 'textarea') {
+    const taPatternAttr = field.pattern
+      ? ` data-pattern="${escHtml(field.pattern)}" data-pattern-err="${escHtml(field.patternError || 'Invalid value.')}"`
+      : '';
     return `      <div class="mfg-field-group"${condAttr}${condStyle}>
         <label class="mfg-label" for="${fid}">${label}${star}</label>
-        <textarea id="${fid}" class="mfg-input" placeholder="${ph}"${req}></textarea>
+        <textarea id="${fid}" class="mfg-input" placeholder="${ph}"${req}${taPatternAttr}></textarea>
       </div>`;
   }
 
@@ -2273,9 +2335,15 @@ ${opts}
   const inputType = field.type === 'phone' ? 'tel'
     : field.type === 'time' ? 'time'
     : field.type;
+  const autoP = TYPE_PATTERNS[field.type];
+  const effPattern = field.pattern || (autoP ? autoP.pattern : '');
+  const effError   = field.patternError || (autoP ? autoP.error : 'Invalid value.');
+  const patternAttr = (effPattern && VALIDATABLE_TYPES.has(field.type))
+    ? ` data-pattern="${escHtml(effPattern)}" data-pattern-err="${escHtml(effError)}"`
+    : '';
   return `      <div class="mfg-field-group"${condAttr}${condStyle}>
         <label class="mfg-label" for="${fid}">${label}${star}</label>
-        <input type="${inputType}" id="${fid}" class="mfg-input" placeholder="${ph}" name="${fid}"${req}>
+        <input type="${inputType}" id="${fid}" class="mfg-input" placeholder="${ph}" name="${fid}"${req}${patternAttr}>
       </div>`;
 }
 
