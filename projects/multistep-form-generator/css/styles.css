@@ -44,6 +44,38 @@ body {
   border-bottom: 1px solid var(--border-subtle);
   background: var(--panel-bg);
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Soft gradient glow layer */
+.app-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 100% at 94% 40%, rgba(232,255,71,0.09) 0%, transparent 68%),
+    radial-gradient(ellipse 30% 70% at 6% 70%, rgba(79,189,186,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Organic blob shape — top-right accent */
+.app-header::after {
+  content: '';
+  position: absolute;
+  top: -28px;
+  right: -40px;
+  width: 160px;
+  height: 140px;
+  background: rgba(232,255,71,0.05);
+  border-radius: 62% 38% 53% 47% / 55% 45% 55% 45%;
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.app-header .header-left {
+  position: relative;
+  z-index: 1;
 }
 
 .app-title {
