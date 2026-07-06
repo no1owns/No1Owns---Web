@@ -18,10 +18,27 @@ function scheduleAutosave() {
   }, 500);
 }
 
+function openLightbox(src, alt) {
+  const lightbox = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImage');
+  img.src = src;
+  img.alt = alt || '';
+  lightbox.classList.remove('hidden');
+}
+
+function initLightbox() {
+  const lightbox = document.getElementById('lightbox');
+  const close = () => lightbox.classList.add('hidden');
+  document.getElementById('lightboxClose').addEventListener('click', close);
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+}
+
 function initModeSwitching() {
   const buttons = document.querySelectorAll('.mode-btn');
   const panels = {
     form: document.getElementById('formModePanel'),
+    chat: document.getElementById('chatModePanel'),
     nlimport: document.getElementById('nlImportModePanel')
   };
   buttons.forEach(btn => {
@@ -137,6 +154,66 @@ function initSavedBriefs() {
   });
 }
 
+// ───────── Guided Chat ─────────
+let chatStepIndex = 0;
+
+function renderChatProgress() {
+  const container = document.getElementById('chatProgress');
+  container.innerHTML = GUIDED_CHAT_SCRIPT.map(step => {
+    const value = getByPath(AppState.data, step.path);
+    return `<div class="chat-progress-item"><strong>${step.path.split('.').pop().replace(/_/g, ' ')}</strong>${value || '<span style="color:var(--text-tertiary)">—</span>'}</div>`;
+  }).join('');
+}
+
+function addChatBubble(text, who) {
+  const thread = document.getElementById('chatThread');
+  const bubble = document.createElement('div');
+  bubble.className = `chat-bubble ${who}`;
+  bubble.textContent = text;
+  thread.appendChild(bubble);
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function askNextChatQuestion() {
+  if (chatStepIndex >= GUIDED_CHAT_SCRIPT.length) {
+    addChatBubble("That's everything — your brief is filled in. Switch to Form mode to review, or generate it below.", 'bot');
+    document.getElementById('chatInputForm').classList.add('hidden');
+    return;
+  }
+  addChatBubble(GUIDED_CHAT_SCRIPT[chatStepIndex].question, 'bot');
+}
+
+function initGuidedChat() {
+  const form = document.getElementById('chatInputForm');
+  const input = document.getElementById('chatInput');
+
+  document.querySelector('.mode-btn[data-mode="chat"]').addEventListener('click', () => {
+    if (chatStepIndex === 0 && document.getElementById('chatThread').children.length === 0) {
+      askNextChatQuestion();
+      renderChatProgress();
+    }
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const value = input.value.trim();
+    if (!value) return;
+    addChatBubble(value, 'user');
+    input.value = '';
+
+    const step = GUIDED_CHAT_SCRIPT[chatStepIndex];
+    if (step) {
+      const isOptionalSkip = step.path === 'references.inspiration_notes' && /^skip$/i.test(value);
+      if (!isOptionalSkip) setByPath(AppState.data, step.path, value);
+      chatStepIndex++;
+      refreshFormFromState();
+      renderChatProgress();
+      scheduleAutosave();
+    }
+    askNextChatQuestion();
+  });
+}
+
 // ───────── NL Import ─────────
 function initNlImport() {
   document.getElementById('nlImportParseBtn').addEventListener('click', () => {
@@ -173,6 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initCollapsibleSections();
   initExpanders();
   initSavedBriefs();
+  initGuidedChat();
   initNlImport();
+  initLightbox();
   autoExpandFilledSections();
 });

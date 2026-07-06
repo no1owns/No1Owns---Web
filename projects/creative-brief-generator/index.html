@@ -12,7 +12,6 @@
       <h1 class="app-title">Creative Brief Generator</h1>
       <p class="app-subtitle">A portable, AI-ready creative brief — built in minutes.</p>
     </div>
-    <a class="header-credit" href="https://theforgehq.com" target="_blank" rel="noopener">Forge HQ</a>
   </header>
 
   <nav class="section-nav" id="sectionNav">
@@ -26,6 +25,7 @@
   <div class="toolbar">
     <div class="mode-toggle" id="modeToggle" role="tablist">
       <button class="mode-btn active" data-mode="form" role="tab">Form</button>
+      <button class="mode-btn" data-mode="chat" role="tab">Guided Chat</button>
       <button class="mode-btn" data-mode="nlimport" role="tab">Paste &amp; Import</button>
     </div>
 
@@ -63,20 +63,10 @@
               <span class="field-label">Client</span>
               <input class="input" type="text" id="f-project-client" />
             </label>
-            <label class="field field-wide">
+            <div class="field field-wide">
               <span class="field-label">Project type</span>
-              <select class="input" id="f-project-type">
-                <option value="">Select a type…</option>
-                <option>Brand identity</option>
-                <option>Campaign</option>
-                <option>Website / digital product</option>
-                <option>Social content</option>
-                <option>Video / motion</option>
-                <option>Packaging</option>
-                <option>Pitch / deck</option>
-                <option>Other</option>
-              </select>
-            </label>
+              <div class="type-card-grid" id="projectTypeGrid"></div>
+            </div>
           </div>
 
           <div class="expander">
@@ -131,9 +121,12 @@
               <input type="range" min="0" max="100" value="50" class="tone-slider" id="tone-minimal-bold" />
               <span class="slider-end-label">Bold</span>
             </div>
-            <div class="tone-preview" id="tonePreview">
-              <strong id="tonePreviewLabel">Balanced &amp; Grounded</strong>
-              <span id="tonePreviewDescriptors" class="tone-preview-tags"></span>
+            <div class="tone-preview photo-card" id="tonePreview">
+              <img class="tone-preview-photo" id="tonePreviewPhoto" alt="" loading="lazy" onerror="handlePhotoError(this)" />
+              <div class="tone-preview-text">
+                <strong id="tonePreviewLabel">Balanced &amp; Grounded</strong>
+                <span id="tonePreviewDescriptors" class="tone-preview-tags"></span>
+              </div>
             </div>
           </div>
 
@@ -290,6 +283,23 @@
       </form>
     </div>
 
+    <!-- ───────── Guided Chat Mode ───────── -->
+    <div class="mode-panel hidden" id="chatModePanel">
+      <div class="chat-layout">
+        <div class="section-card chat-card">
+          <div class="chat-thread" id="chatThread"></div>
+          <form class="chat-input-row" id="chatInputForm">
+            <input class="input" type="text" id="chatInput" placeholder="Type your answer…" autocomplete="off" />
+            <button class="btn btn-accent btn-pill" type="submit">Send</button>
+          </form>
+        </div>
+        <aside class="section-card chat-sidebar">
+          <span class="subsection-title">Brief so far</span>
+          <div class="chat-progress" id="chatProgress"></div>
+        </aside>
+      </div>
+    </div>
+
     <!-- ───────── NL Import Mode ───────── -->
     <div class="mode-panel hidden" id="nlImportModePanel">
       <section class="section-card">
@@ -317,6 +327,11 @@
   </footer>
 
   <div class="toast" id="toast"></div>
+
+  <div class="lightbox hidden" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+    <img class="lightbox-image" id="lightboxImage" alt="" />
+  </div>
 
   <script src="js/state.js"></script>
   <script src="js/nlParser.js"></script>

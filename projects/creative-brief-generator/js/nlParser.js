@@ -6,6 +6,17 @@ function quickCaptureClean(text) {
   return t;
 }
 
+const GUIDED_CHAT_SCRIPT = [
+  { path: 'project.name', question: "What's this project called?" },
+  { path: 'project.client', question: "Who's the client?" },
+  { path: 'strategy.business_objective', question: "What's the business objective behind this project?" },
+  { path: 'strategy.creative_objective', question: "What's the creative objective?" },
+  { path: 'strategy.audience_primary', question: "Who's the primary audience?" },
+  { path: 'strategy.key_message', question: "What's the one key message this needs to land?" },
+  { path: 'execution.timeline', question: "What's the timeline for this project?" },
+  { path: 'references.inspiration_notes', question: "Any inspiration or reference notes you want to capture? (Optional — type \"skip\" to leave blank)" }
+];
+
 function setByPath(obj, path, value) {
   const parts = path.split('.');
   let cur = obj;
