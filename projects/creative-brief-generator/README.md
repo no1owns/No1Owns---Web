@@ -16,8 +16,9 @@ A `.brief` file is a UTF-8 JSON file (just a renamed `.json`) with a defined str
 
 ## Features
 
-- Sidebar-navigated brief builder: Project, Strategy, Execution, References, AI Context
-- Three ways to fill it in: structured Form, a scripted Guided Chat, or a one-shot NL Import that heuristically sorts free text into fields (all fully local — no API calls, no network requests)
+- Clean, light, card-based layout: Project, Strategy, Execution, References, AI Context — jump between them with the top nav
+- Only essential fields show by default; secondary detail lives behind "+ Add more" toggles, and References/AI Context stay collapsed until you need them — so the form reads short even though nothing was cut
+- Two ways to fill it in: structured Form, or a one-shot Paste & Import that heuristically sorts free text into fields (both fully local — no API calls, no network requests)
 - Dual-axis tone slider (Formal↔Playful, Minimal↔Bold) that auto-generates a tone label and descriptors
 - Deliverables checklist plus custom tag builder
 - Do/Don't guardrail builder with common presets
@@ -27,7 +28,7 @@ A `.brief` file is a UTF-8 JSON file (just a renamed `.json`) with a defined str
 
 ## Usage
 
-Open `index.html` in any browser — it works entirely offline, including as a local `file://` page. Fill in the sections from the sidebar, generate the brief from the bottom bar, then export.
+Open `index.html` in any browser — it works entirely offline, including as a local `file://` page. Fill in the sections from the top nav, generate the brief from the bottom bar, then export.
 
 ## Stack
 

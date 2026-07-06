@@ -10,286 +10,309 @@
   <header class="app-header">
     <div class="header-left">
       <h1 class="app-title">Creative Brief Generator</h1>
-      <p class="app-subtitle">Build a portable, AI-ready creative brief — no account, no backend.</p>
+      <p class="app-subtitle">A portable, AI-ready creative brief — built in minutes.</p>
     </div>
     <a class="header-credit" href="https://theforgehq.com" target="_blank" rel="noopener">Forge HQ</a>
   </header>
 
-  <div class="mobile-tabs" id="mobileTabs">
-    <button class="mobile-tab active" data-target="project">Project</button>
-    <button class="mobile-tab" data-target="strategy">Strategy</button>
-    <button class="mobile-tab" data-target="execution">Execution</button>
-    <button class="mobile-tab" data-target="references">References</button>
-    <button class="mobile-tab" data-target="ai-context">AI Context</button>
+  <nav class="section-nav" id="sectionNav">
+    <button class="nav-chip active" data-target="project">Project</button>
+    <button class="nav-chip" data-target="strategy">Strategy</button>
+    <button class="nav-chip" data-target="execution">Execution</button>
+    <button class="nav-chip" data-target="references">References</button>
+    <button class="nav-chip" data-target="ai-context">AI Context</button>
+  </nav>
+
+  <div class="toolbar">
+    <div class="mode-toggle" id="modeToggle" role="tablist">
+      <button class="mode-btn active" data-mode="form" role="tab">Form</button>
+      <button class="mode-btn" data-mode="nlimport" role="tab">Paste &amp; Import</button>
+    </div>
+
+    <div class="saved-briefs">
+      <select class="input input-sm" id="savedBriefsSelect">
+        <option value="">New brief</option>
+      </select>
+      <button class="icon-btn" id="saveBriefBtn" title="Save this brief" aria-label="Save">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+      </button>
+      <button class="icon-btn" id="deleteBriefBtn" title="Delete saved brief" aria-label="Delete">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      </button>
+    </div>
   </div>
 
-  <div class="app-shell">
-    <nav class="sidebar" id="sidebar">
-      <div class="sidebar-group">
-        <span class="sidebar-label">Sections</span>
-        <a class="sidebar-link active" data-target="project" href="#project">Project</a>
-        <a class="sidebar-link" data-target="strategy" href="#strategy">Strategy</a>
-        <a class="sidebar-link" data-target="execution" href="#execution">Execution</a>
-        <a class="sidebar-link" data-target="references" href="#references">References</a>
-        <a class="sidebar-link" data-target="ai-context" href="#ai-context">AI Context</a>
-      </div>
+  <main class="app-main">
+    <span class="autosave-indicator" id="autosaveIndicator"></span>
 
-      <div class="sidebar-group">
-        <span class="sidebar-label">Saved Briefs</span>
-        <select class="input input-sm" id="savedBriefsSelect">
-          <option value="">— New brief —</option>
-        </select>
-        <div class="sidebar-btn-row">
-          <button class="btn btn-ghost btn-sm" id="saveBriefBtn">Save</button>
-          <button class="btn btn-ghost btn-sm" id="deleteBriefBtn">Delete</button>
-        </div>
-      </div>
-    </nav>
+    <!-- ───────── Form Mode ───────── -->
+    <div class="mode-panel" id="formModePanel">
+      <form id="briefForm" novalidate>
 
-    <main class="app-main">
-      <div class="mode-bar">
-        <div class="mode-toggle" id="modeToggle" role="tablist">
-          <button class="mode-btn active" data-mode="form" role="tab">Form</button>
-          <button class="mode-btn" data-mode="chat" role="tab">Guided Chat</button>
-          <button class="mode-btn" data-mode="nlimport" role="tab">NL Import</button>
-        </div>
-        <span class="autosave-indicator" id="autosaveIndicator"></span>
-      </div>
-
-      <!-- ───────── Form Mode ───────── -->
-      <div class="mode-panel" id="formModePanel">
-        <form id="briefForm" novalidate>
-
-          <section class="form-section" id="project">
-            <h2 class="section-title">Project</h2>
-            <div class="field-grid">
-              <label class="field">
-                <span class="field-label">Project name <span class="req">*</span></span>
-                <input class="input" type="text" id="f-project-name" required />
-                <span class="field-error" data-error-for="f-project-name"></span>
-              </label>
-              <label class="field">
-                <span class="field-label">Client</span>
-                <input class="input" type="text" id="f-project-client" />
-              </label>
-              <label class="field">
-                <span class="field-label">Project type</span>
-                <select class="input" id="f-project-type">
-                  <option value="">Select a type…</option>
-                  <option>Brand identity</option>
-                  <option>Campaign</option>
-                  <option>Website / digital product</option>
-                  <option>Social content</option>
-                  <option>Video / motion</option>
-                  <option>Packaging</option>
-                  <option>Pitch / deck</option>
-                  <option>Other</option>
-                </select>
-              </label>
-              <label class="field">
-                <span class="field-label">Budget range</span>
-                <input class="input" type="text" id="f-project-budget" placeholder="e.g. $10k–$25k" />
-              </label>
-              <label class="field">
-                <span class="field-label">Creative lead</span>
-                <input class="input" type="text" id="f-project-lead" />
-              </label>
-            </div>
-          </section>
-
-          <section class="form-section" id="strategy">
-            <h2 class="section-title">Strategy</h2>
-            <div class="field-grid">
-              <label class="field field-wide">
-                <span class="field-label-row">
-                  <span class="field-label">Business objective</span>
-                  <button type="button" class="quick-add-btn" data-field="f-strategy-bizobj">+ Quick add</button>
-                </span>
-                <textarea class="input textarea" id="f-strategy-bizobj" rows="2"></textarea>
-              </label>
-              <label class="field field-wide">
-                <span class="field-label-row">
-                  <span class="field-label">Creative objective</span>
-                  <button type="button" class="quick-add-btn" data-field="f-strategy-creativeobj">+ Quick add</button>
-                </span>
-                <textarea class="input textarea" id="f-strategy-creativeobj" rows="2"></textarea>
-              </label>
-              <label class="field">
-                <span class="field-label-row">
-                  <span class="field-label">Primary audience <span class="req">*</span></span>
-                  <button type="button" class="quick-add-btn" data-field="f-strategy-audience-primary">+ Quick add</button>
-                </span>
-                <textarea class="input textarea" id="f-strategy-audience-primary" rows="2" required></textarea>
-                <span class="field-error" data-error-for="f-strategy-audience-primary"></span>
-              </label>
-              <label class="field">
-                <span class="field-label-row">
-                  <span class="field-label">Secondary audience</span>
-                  <button type="button" class="quick-add-btn" data-field="f-strategy-audience-secondary">+ Quick add</button>
-                </span>
-                <textarea class="input textarea" id="f-strategy-audience-secondary" rows="2"></textarea>
-              </label>
-              <label class="field field-wide">
-                <span class="field-label-row">
-                  <span class="field-label">Key message <span class="req">*</span></span>
-                  <button type="button" class="quick-add-btn" data-field="f-strategy-keymessage">+ Quick add</button>
-                </span>
-                <textarea class="input textarea" id="f-strategy-keymessage" rows="2" required></textarea>
-                <span class="field-error" data-error-for="f-strategy-keymessage"></span>
-              </label>
-              <label class="field field-wide">
-                <span class="field-label-row">
-                  <span class="field-label">Brand positioning</span>
-                  <button type="button" class="quick-add-btn" data-field="f-strategy-positioning">+ Quick add</button>
-                </span>
-                <textarea class="input textarea" id="f-strategy-positioning" rows="2"></textarea>
-              </label>
-            </div>
-
-            <div class="tone-block">
-              <h3 class="subsection-title">Tone &amp; voice</h3>
-              <div class="slider-row">
-                <span class="slider-end-label">Formal</span>
-                <input type="range" min="0" max="100" value="50" class="tone-slider" id="tone-formal-playful" />
-                <span class="slider-end-label">Playful</span>
-              </div>
-              <div class="slider-row">
-                <span class="slider-end-label">Minimal</span>
-                <input type="range" min="0" max="100" value="50" class="tone-slider" id="tone-minimal-bold" />
-                <span class="slider-end-label">Bold</span>
-              </div>
-              <div class="tone-preview" id="tonePreview">
-                <strong id="tonePreviewLabel">Balanced &amp; Grounded</strong>
-                <span id="tonePreviewDescriptors" class="tone-preview-tags"></span>
-              </div>
-              <label class="field field-wide">
-                <span class="field-label">Additional notes on voice or tone</span>
-                <textarea class="input textarea" id="f-strategy-tone-notes" rows="2"></textarea>
-              </label>
-            </div>
-          </section>
-
-          <section class="form-section" id="execution">
-            <h2 class="section-title">Execution</h2>
-
-            <div class="deliverables-block">
-              <h3 class="subsection-title">Deliverables</h3>
-              <div class="checklist-grid" id="deliverablesChecklist"></div>
-              <div class="tag-builder" id="deliverablesTagBuilder">
-                <div class="tag-list" id="deliverablesTagList"></div>
-                <input class="tag-input" type="text" id="deliverablesTagInput" placeholder="Add a custom deliverable, press Enter" />
-              </div>
-            </div>
-
-            <div class="field-grid">
-              <label class="field">
-                <span class="field-label">Timeline</span>
-                <textarea class="input textarea" id="f-execution-timeline" rows="2"></textarea>
-              </label>
-              <label class="field">
-                <span class="field-label">Constraints</span>
-                <textarea class="input textarea" id="f-execution-constraints" rows="2"></textarea>
-              </label>
-              <label class="field field-wide">
-                <span class="field-label">Success metrics</span>
-                <textarea class="input textarea" id="f-execution-metrics" rows="2"></textarea>
-              </label>
-            </div>
-          </section>
-
-          <section class="form-section" id="references">
-            <h2 class="section-title">References</h2>
-            <label class="field field-wide">
-              <span class="field-label">Inspiration notes</span>
-              <textarea class="input textarea" id="f-references-notes" rows="2"></textarea>
+        <section class="section-card" id="project">
+          <div class="card-header">
+            <h2 class="card-title">Project</h2>
+          </div>
+          <div class="field-grid">
+            <label class="field">
+              <span class="field-label">Project name <span class="req">*</span></span>
+              <input class="input" type="text" id="f-project-name" required />
+              <span class="field-error" data-error-for="f-project-name"></span>
             </label>
+            <label class="field">
+              <span class="field-label">Client</span>
+              <input class="input" type="text" id="f-project-client" />
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">Project type</span>
+              <select class="input" id="f-project-type">
+                <option value="">Select a type…</option>
+                <option>Brand identity</option>
+                <option>Campaign</option>
+                <option>Website / digital product</option>
+                <option>Social content</option>
+                <option>Video / motion</option>
+                <option>Packaging</option>
+                <option>Pitch / deck</option>
+                <option>Other</option>
+              </select>
+            </label>
+          </div>
 
-            <div class="reference-upload-row">
-              <label class="btn btn-ghost btn-file">
-                Upload images
-                <input type="file" id="imageUploadInput" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" multiple hidden />
-              </label>
-              <div class="url-add-row">
-                <input class="input" type="text" id="urlAddInput" placeholder="Paste a reference URL…" />
-                <button type="button" class="btn btn-accent btn-sm" id="urlAddBtn">Add URL</button>
+          <div class="expander">
+            <button type="button" class="expander-toggle" data-target="projectMore">+ Add budget &amp; lead</button>
+            <div class="expander-body" id="projectMore">
+              <div class="expander-inner field-grid">
+                <label class="field">
+                  <span class="field-label">Budget range</span>
+                  <input class="input" type="text" id="f-project-budget" placeholder="e.g. $10k–$25k" />
+                </label>
+                <label class="field">
+                  <span class="field-label">Creative lead</span>
+                  <input class="input" type="text" id="f-project-lead" />
+                </label>
               </div>
             </div>
-            <p class="field-hint" id="uploadHint">JPG, PNG, GIF, WEBP, or SVG — up to 5MB each, 10 images max.</p>
+          </div>
+        </section>
 
-            <div class="reference-grid" id="referenceGrid"></div>
-          </section>
+        <section class="section-card" id="strategy">
+          <div class="card-header">
+            <h2 class="card-title">Strategy</h2>
+          </div>
+          <div class="field-grid">
+            <label class="field field-wide">
+              <span class="field-label-row">
+                <span class="field-label">Primary audience <span class="req">*</span></span>
+                <button type="button" class="quick-add-btn" data-field="f-strategy-audience-primary">✦ Quick add</button>
+              </span>
+              <textarea class="input textarea" id="f-strategy-audience-primary" rows="2" required></textarea>
+              <span class="field-error" data-error-for="f-strategy-audience-primary"></span>
+            </label>
+            <label class="field field-wide">
+              <span class="field-label-row">
+                <span class="field-label">Key message <span class="req">*</span></span>
+                <button type="button" class="quick-add-btn" data-field="f-strategy-keymessage">✦ Quick add</button>
+              </span>
+              <textarea class="input textarea" id="f-strategy-keymessage" rows="2" required></textarea>
+              <span class="field-error" data-error-for="f-strategy-keymessage"></span>
+            </label>
+          </div>
 
-          <section class="form-section" id="ai-context">
-            <h2 class="section-title">AI Context</h2>
+          <div class="tone-block">
+            <h3 class="subsection-title">Tone &amp; voice</h3>
+            <div class="slider-row">
+              <span class="slider-end-label">Formal</span>
+              <input type="range" min="0" max="100" value="50" class="tone-slider" id="tone-formal-playful" />
+              <span class="slider-end-label">Playful</span>
+            </div>
+            <div class="slider-row">
+              <span class="slider-end-label">Minimal</span>
+              <input type="range" min="0" max="100" value="50" class="tone-slider" id="tone-minimal-bold" />
+              <span class="slider-end-label">Bold</span>
+            </div>
+            <div class="tone-preview" id="tonePreview">
+              <strong id="tonePreviewLabel">Balanced &amp; Grounded</strong>
+              <span id="tonePreviewDescriptors" class="tone-preview-tags"></span>
+            </div>
+          </div>
 
-            <div class="donot-block">
-              <h3 class="subsection-title">Always maintain</h3>
-              <div class="preset-chip-row" id="doPresetRow"></div>
-              <div class="tag-builder" id="doTagBuilder">
-                <div class="tag-list" id="doTagList"></div>
-                <input class="tag-input" type="text" id="doTagInput" placeholder="Add a custom guardrail, press Enter" />
+          <div class="expander">
+            <button type="button" class="expander-toggle" data-target="strategyMore">+ Add objectives, secondary audience &amp; positioning</button>
+            <div class="expander-body" id="strategyMore">
+              <div class="expander-inner field-grid">
+                <label class="field">
+                  <span class="field-label-row">
+                    <span class="field-label">Business objective</span>
+                    <button type="button" class="quick-add-btn" data-field="f-strategy-bizobj">✦ Quick add</button>
+                  </span>
+                  <textarea class="input textarea" id="f-strategy-bizobj" rows="2"></textarea>
+                </label>
+                <label class="field">
+                  <span class="field-label-row">
+                    <span class="field-label">Creative objective</span>
+                    <button type="button" class="quick-add-btn" data-field="f-strategy-creativeobj">✦ Quick add</button>
+                  </span>
+                  <textarea class="input textarea" id="f-strategy-creativeobj" rows="2"></textarea>
+                </label>
+                <label class="field">
+                  <span class="field-label-row">
+                    <span class="field-label">Secondary audience</span>
+                    <button type="button" class="quick-add-btn" data-field="f-strategy-audience-secondary">✦ Quick add</button>
+                  </span>
+                  <textarea class="input textarea" id="f-strategy-audience-secondary" rows="2"></textarea>
+                </label>
+                <label class="field">
+                  <span class="field-label-row">
+                    <span class="field-label">Brand positioning</span>
+                    <button type="button" class="quick-add-btn" data-field="f-strategy-positioning">✦ Quick add</button>
+                  </span>
+                  <textarea class="input textarea" id="f-strategy-positioning" rows="2"></textarea>
+                </label>
+                <label class="field field-wide">
+                  <span class="field-label">Additional notes on voice or tone</span>
+                  <textarea class="input textarea" id="f-strategy-tone-notes" rows="2"></textarea>
+                </label>
               </div>
             </div>
+          </div>
+        </section>
 
-            <div class="donot-block">
-              <h3 class="subsection-title">Never</h3>
-              <div class="preset-chip-row" id="dontPresetRow"></div>
-              <div class="tag-builder" id="dontTagBuilder">
-                <div class="tag-list" id="dontTagList"></div>
-                <input class="tag-input" type="text" id="dontTagInput" placeholder="Add a custom guardrail, press Enter" />
+        <section class="section-card" id="execution">
+          <div class="card-header">
+            <h2 class="card-title">Execution</h2>
+          </div>
+
+          <div class="deliverables-block">
+            <h3 class="subsection-title">Deliverables</h3>
+            <div class="checklist-grid" id="deliverablesChecklist"></div>
+            <div class="tag-builder" id="deliverablesTagBuilder">
+              <div class="tag-list" id="deliverablesTagList"></div>
+              <input class="tag-input" type="text" id="deliverablesTagInput" placeholder="Add a custom deliverable, press Enter" />
+            </div>
+          </div>
+
+          <div class="expander">
+            <button type="button" class="expander-toggle" data-target="executionMore">+ Add timeline, constraints &amp; success metrics</button>
+            <div class="expander-body" id="executionMore">
+              <div class="expander-inner field-grid">
+                <label class="field">
+                  <span class="field-label">Timeline</span>
+                  <textarea class="input textarea" id="f-execution-timeline" rows="2"></textarea>
+                </label>
+                <label class="field">
+                  <span class="field-label">Constraints</span>
+                  <textarea class="input textarea" id="f-execution-constraints" rows="2"></textarea>
+                </label>
+                <label class="field field-wide">
+                  <span class="field-label">Success metrics</span>
+                  <textarea class="input textarea" id="f-execution-metrics" rows="2"></textarea>
+                </label>
               </div>
             </div>
+          </div>
+        </section>
 
-            <div class="ai-preview-block">
-              <h3 class="subsection-title">Generated AI context <span class="field-hint-inline">(updates when you generate the brief)</span></h3>
+        <section class="section-card collapsible" id="references">
+          <button type="button" class="card-header card-header-toggle" data-target="referencesBody">
+            <span>
+              <h2 class="card-title">References</h2>
+              <span class="card-subtitle">Optional — mood boards, links, or images</span>
+            </span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="collapsible-body" id="referencesBody">
+            <div class="collapsible-inner">
               <label class="field field-wide">
-                <span class="field-label">System prompt</span>
-                <textarea class="input textarea readonly-preview" id="previewSystemPrompt" rows="5" readonly></textarea>
+                <span class="field-label">Inspiration notes</span>
+                <textarea class="input textarea" id="f-references-notes" rows="2"></textarea>
               </label>
-              <label class="field field-wide">
-                <span class="field-label">Style keywords</span>
-                <div class="tag-list readonly-tags" id="previewStyleKeywords"></div>
-              </label>
-            </div>
-          </section>
-        </form>
-      </div>
 
-      <!-- ───────── Guided Chat Mode ───────── -->
-      <div class="mode-panel hidden" id="chatModePanel">
-        <div class="chat-layout">
-          <div class="chat-thread" id="chatThread"></div>
-          <form class="chat-input-row" id="chatInputForm">
-            <input class="input" type="text" id="chatInput" placeholder="Type your answer…" autocomplete="off" />
-            <button class="btn btn-accent" type="submit">Send</button>
-          </form>
+              <div class="reference-upload-row">
+                <label class="btn btn-ghost btn-file">
+                  Upload images
+                  <input type="file" id="imageUploadInput" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" multiple hidden />
+                </label>
+                <div class="url-add-row">
+                  <input class="input" type="text" id="urlAddInput" placeholder="Paste a reference URL…" />
+                  <button type="button" class="btn btn-accent btn-sm" id="urlAddBtn">Add URL</button>
+                </div>
+              </div>
+              <p class="field-hint" id="uploadHint">JPG, PNG, GIF, WEBP, or SVG — up to 5MB each, 10 images max.</p>
+
+              <div class="reference-grid" id="referenceGrid"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card collapsible" id="ai-context">
+          <button type="button" class="card-header card-header-toggle" data-target="aiContextBody">
+            <span>
+              <h2 class="card-title">AI Context</h2>
+              <span class="card-subtitle">Optional — guardrails &amp; the generated AI prompt</span>
+            </span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="collapsible-body" id="aiContextBody">
+            <div class="collapsible-inner">
+              <div class="donot-block">
+                <h3 class="subsection-title">Always maintain</h3>
+                <div class="preset-chip-row" id="doPresetRow"></div>
+                <div class="tag-builder" id="doTagBuilder">
+                  <div class="tag-list" id="doTagList"></div>
+                  <input class="tag-input" type="text" id="doTagInput" placeholder="Add a custom guardrail, press Enter" />
+                </div>
+              </div>
+
+              <div class="donot-block">
+                <h3 class="subsection-title">Never</h3>
+                <div class="preset-chip-row" id="dontPresetRow"></div>
+                <div class="tag-builder" id="dontTagBuilder">
+                  <div class="tag-list" id="dontTagList"></div>
+                  <input class="tag-input" type="text" id="dontTagInput" placeholder="Add a custom guardrail, press Enter" />
+                </div>
+              </div>
+
+              <div class="ai-preview-block">
+                <h3 class="subsection-title">Generated AI context <span class="field-hint-inline">(updates when you generate the brief)</span></h3>
+                <label class="field field-wide">
+                  <span class="field-label">System prompt</span>
+                  <textarea class="input textarea readonly-preview" id="previewSystemPrompt" rows="5" readonly></textarea>
+                </label>
+                <label class="field field-wide">
+                  <span class="field-label">Style keywords</span>
+                  <div class="tag-list readonly-tags" id="previewStyleKeywords"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+      </form>
+    </div>
+
+    <!-- ───────── NL Import Mode ───────── -->
+    <div class="mode-panel hidden" id="nlImportModePanel">
+      <section class="section-card">
+        <div class="card-header">
+          <h2 class="card-title">Describe your project</h2>
+          <span class="card-subtitle">Write a few sentences — we'll sort it into fields for you</span>
         </div>
-        <aside class="chat-sidebar">
-          <span class="sidebar-label">Brief so far</span>
-          <div class="chat-progress" id="chatProgress"></div>
-        </aside>
-      </div>
-
-      <!-- ───────── NL Import Mode ───────── -->
-      <div class="mode-panel hidden" id="nlImportModePanel">
-        <h2 class="section-title">Describe your project</h2>
-        <p class="field-hint">Write a few sentences about the project. We'll do our best to sort it into the right fields — please review afterward.</p>
-        <textarea class="input textarea" id="nlImportTextarea" rows="10" placeholder="e.g. This is a brand campaign for Acme Co, targeting mid-market IT buyers. The objective is to build awareness ahead of our fall launch. Tone should be confident but approachable. Deliverables include a landing page, three social posts, and a sales deck. Timeline is six weeks, budget is $30k."></textarea>
+        <textarea class="input textarea" id="nlImportTextarea" rows="8" placeholder="e.g. This is a brand campaign for Acme Co, targeting mid-market IT buyers. The objective is to build awareness ahead of our fall launch. Tone should be confident but approachable. Deliverables include a landing page, three social posts, and a sales deck. Timeline is six weeks, budget is $30k."></textarea>
         <button type="button" class="btn btn-accent" id="nlImportParseBtn">Parse into fields</button>
         <div class="nl-import-result hidden" id="nlImportResult">
           <h3 class="subsection-title">Matched fields</h3>
           <ul class="nl-match-list" id="nlMatchList"></ul>
           <p class="field-hint">Unmatched text has been added to Inspiration Notes for you to redistribute.</p>
         </div>
-      </div>
-    </main>
-  </div>
+      </section>
+    </div>
+  </main>
 
   <footer class="bottom-bar">
-    <button class="btn btn-accent" id="generateBriefBtn">Generate Brief</button>
-    <button class="btn btn-ghost" id="downloadBriefBtn" disabled>Download .brief</button>
-    <button class="btn btn-ghost" id="downloadMdBtn" disabled>Download .md</button>
-    <button class="btn btn-ghost" id="copyPromptBtn" disabled>Copy System Prompt</button>
+    <button class="btn btn-accent btn-pill" id="generateBriefBtn">Generate Brief</button>
+    <button class="btn btn-ghost btn-pill" id="downloadBriefBtn" disabled>Download .brief</button>
+    <button class="btn btn-ghost btn-pill" id="downloadMdBtn" disabled>Download .md</button>
+    <button class="btn btn-ghost btn-pill" id="copyPromptBtn" disabled>Copy System Prompt</button>
     <span class="status-label" id="statusLabel"></span>
   </footer>
 

@@ -225,6 +225,7 @@ function refreshFormFromState() {
   initAiContextBuilders();
   initTonesSliders();
   renderReferenceGrid();
+  autoExpandFilledSections();
 }
 
 function initForm() {
