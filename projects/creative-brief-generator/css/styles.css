@@ -66,17 +66,6 @@ a { color: var(--accent); }
   margin-top: 4px;
 }
 
-.header-credit {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent);
-  background: var(--accent-soft);
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  text-decoration: none;
-  white-space: nowrap;
-}
-.header-credit:hover { background: #E3DFFB; }
 
 /* ── Section nav (top chips) ── */
 .section-nav {
@@ -179,7 +168,7 @@ a { color: var(--accent); }
   padding: 0 20px 40px;
 }
 
-.mode-panel.hidden { display: none; }
+.hidden { display: none !important; }
 
 /* ── Section cards ── */
 .section-card {
@@ -644,6 +633,54 @@ a { color: var(--accent); }
   margin-left: auto;
 }
 
+/* ── Guided Chat ── */
+.chat-layout {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 20px;
+  align-items: start;
+}
+
+.chat-card { display: flex; flex-direction: column; }
+
+.chat-thread {
+  max-height: 46vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 4px;
+}
+
+.chat-bubble {
+  max-width: 82%;
+  padding: 10px 14px;
+  border-radius: var(--radius-card);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.chat-bubble.bot { background: var(--surface-alt); border: 1px solid var(--border); align-self: flex-start; }
+.chat-bubble.user { background: var(--accent); color: #fff; align-self: flex-end; }
+
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+.chat-input-row .input { flex: 1; }
+
+.chat-sidebar { max-height: 60vh; overflow-y: auto; }
+.chat-progress { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.chat-progress-item { font-size: 12px; }
+.chat-progress-item strong {
+  display: block;
+  color: var(--text-tertiary);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
 /* ── NL Import ── */
 #nlImportModePanel .textarea { margin: 12px 0; }
 .nl-import-result { margin-top: 20px; }
@@ -681,13 +718,62 @@ a { color: var(--accent); }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
+  body { font-size: 14px; }
+
+  .app-header { padding: 16px 16px 10px; }
+  .app-title { font-size: 19px; }
+
+  /* Horizontally scrollable chip nav instead of wrapping to multiple lines */
+  .section-nav {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 16px 14px;
+    scrollbar-width: none;
+  }
+  .section-nav::-webkit-scrollbar { display: none; }
+  .nav-chip { flex-shrink: 0; }
+
+  .toolbar { flex-direction: column; align-items: stretch; padding: 0 16px 16px; gap: 10px; }
+  .mode-toggle { width: 100%; overflow-x: auto; justify-content: flex-start; }
+  .mode-btn { flex-shrink: 0; padding: 8px 13px; font-size: 12.5px; }
+  .saved-briefs { justify-content: stretch; }
+  .saved-briefs select { flex: 1; }
+
+  .app-main { padding: 0 16px 32px; }
+  .section-card { padding: 18px; border-radius: 14px; }
+
   .field-grid { grid-template-columns: 1fr; }
   .checklist-grid { grid-template-columns: 1fr; }
-  .app-header { padding: 18px 20px 12px; flex-wrap: wrap; gap: 10px; }
-  .section-card { padding: 20px; }
-  .bottom-bar { padding: 12px 16px; }
-  .status-label { margin-left: 0; width: 100%; }
-  .toolbar { flex-direction: column; align-items: stretch; }
-  .mode-toggle { justify-content: center; }
-  .saved-briefs { justify-content: center; }
+
+  /* Prevent iOS auto-zoom on focus by keeping inputs at 16px */
+  .input, .tag-input, .chat-input-row input { font-size: 16px; }
+
+  /* Bigger touch targets */
+  .btn { padding: 12px 18px; font-size: 14px; }
+  .icon-btn { width: 42px; height: 42px; }
+  .checklist-item { padding: 12px; }
+  .preset-chip { padding: 9px 14px; }
+  .quick-add-btn { padding: 8px 6px; }
+  .expander-toggle { padding: 10px 0; display: inline-block; }
+  .card-header-toggle { padding: 6px 0; }
+
+  .tone-slider { height: 6px; }
+  .tone-slider::-webkit-slider-thumb { width: 24px; height: 24px; }
+  .tone-slider::-moz-range-thumb { width: 24px; height: 24px; }
+
+  /* Chat mode: stack thread above progress instead of side-by-side */
+  .chat-layout { grid-template-columns: 1fr; }
+  .chat-thread { max-height: 42vh; }
+
+  /* Stack action buttons full-width, thumb-friendly */
+  .bottom-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 16px;
+    gap: 8px;
+  }
+  .bottom-bar .btn { width: 100%; justify-content: center; }
+  .status-label { margin-left: 0; width: 100%; text-align: center; }
 }

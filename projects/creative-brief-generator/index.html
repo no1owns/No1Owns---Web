@@ -12,7 +12,6 @@
       <h1 class="app-title">Creative Brief Generator</h1>
       <p class="app-subtitle">A portable, AI-ready creative brief — built in minutes.</p>
     </div>
-    <a class="header-credit" href="https://theforgehq.com" target="_blank" rel="noopener">Forge HQ</a>
   </header>
 
   <nav class="section-nav" id="sectionNav">
@@ -26,6 +25,7 @@
   <div class="toolbar">
     <div class="mode-toggle" id="modeToggle" role="tablist">
       <button class="mode-btn active" data-mode="form" role="tab">Form</button>
+      <button class="mode-btn" data-mode="chat" role="tab">Guided Chat</button>
       <button class="mode-btn" data-mode="nlimport" role="tab">Paste &amp; Import</button>
     </div>
 
@@ -288,6 +288,23 @@
           </div>
         </section>
       </form>
+    </div>
+
+    <!-- ───────── Guided Chat Mode ───────── -->
+    <div class="mode-panel hidden" id="chatModePanel">
+      <div class="chat-layout">
+        <div class="section-card chat-card">
+          <div class="chat-thread" id="chatThread"></div>
+          <form class="chat-input-row" id="chatInputForm">
+            <input class="input" type="text" id="chatInput" placeholder="Type your answer…" autocomplete="off" />
+            <button class="btn btn-accent btn-pill" type="submit">Send</button>
+          </form>
+        </div>
+        <aside class="section-card chat-sidebar">
+          <span class="subsection-title">Brief so far</span>
+          <div class="chat-progress" id="chatProgress"></div>
+        </aside>
+      </div>
     </div>
 
     <!-- ───────── NL Import Mode ───────── -->
