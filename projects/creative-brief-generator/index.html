@@ -63,20 +63,10 @@
               <span class="field-label">Client</span>
               <input class="input" type="text" id="f-project-client" />
             </label>
-            <label class="field field-wide">
+            <div class="field field-wide">
               <span class="field-label">Project type</span>
-              <select class="input" id="f-project-type">
-                <option value="">Select a type…</option>
-                <option>Brand identity</option>
-                <option>Campaign</option>
-                <option>Website / digital product</option>
-                <option>Social content</option>
-                <option>Video / motion</option>
-                <option>Packaging</option>
-                <option>Pitch / deck</option>
-                <option>Other</option>
-              </select>
-            </label>
+              <div class="type-card-grid" id="projectTypeGrid"></div>
+            </div>
           </div>
 
           <div class="expander">
@@ -131,9 +121,12 @@
               <input type="range" min="0" max="100" value="50" class="tone-slider" id="tone-minimal-bold" />
               <span class="slider-end-label">Bold</span>
             </div>
-            <div class="tone-preview" id="tonePreview">
-              <strong id="tonePreviewLabel">Balanced &amp; Grounded</strong>
-              <span id="tonePreviewDescriptors" class="tone-preview-tags"></span>
+            <div class="tone-preview photo-card" id="tonePreview">
+              <img class="tone-preview-photo" id="tonePreviewPhoto" alt="" loading="lazy" onerror="handlePhotoError(this)" />
+              <div class="tone-preview-text">
+                <strong id="tonePreviewLabel">Balanced &amp; Grounded</strong>
+                <span id="tonePreviewDescriptors" class="tone-preview-tags"></span>
+              </div>
             </div>
           </div>
 
@@ -334,6 +327,11 @@
   </footer>
 
   <div class="toast" id="toast"></div>
+
+  <div class="lightbox hidden" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+    <img class="lightbox-image" id="lightboxImage" alt="" />
+  </div>
 
   <script src="js/state.js"></script>
   <script src="js/nlParser.js"></script>

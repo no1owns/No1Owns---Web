@@ -18,6 +18,22 @@ function scheduleAutosave() {
   }, 500);
 }
 
+function openLightbox(src, alt) {
+  const lightbox = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImage');
+  img.src = src;
+  img.alt = alt || '';
+  lightbox.classList.remove('hidden');
+}
+
+function initLightbox() {
+  const lightbox = document.getElementById('lightbox');
+  const close = () => lightbox.classList.add('hidden');
+  document.getElementById('lightboxClose').addEventListener('click', close);
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+}
+
 function initModeSwitching() {
   const buttons = document.querySelectorAll('.mode-btn');
   const panels = {
@@ -236,5 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initSavedBriefs();
   initGuidedChat();
   initNlImport();
+  initLightbox();
   autoExpandFilledSections();
 });

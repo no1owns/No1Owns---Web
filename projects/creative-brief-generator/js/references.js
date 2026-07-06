@@ -79,7 +79,10 @@ function renderReferenceGrid() {
     card.dataset.id = item.id;
 
     if (item.kind === 'image') {
-      card.innerHTML = `<img class="reference-thumb" src="data:${item.mime_type};base64,${item.base64}" alt="${item.filename}" />`;
+      card.innerHTML = `<img class="reference-thumb" src="data:${item.mime_type};base64,${item.base64}" alt="${item.filename}" loading="lazy" />`;
+      card.querySelector('.reference-thumb').addEventListener('click', () => {
+        openLightbox(`data:${item.mime_type};base64,${item.base64}`, item.filename);
+      });
     } else {
       let domain = item.url;
       try { domain = new URL(item.url).hostname; } catch (e) { /* not a valid absolute URL, show raw */ }

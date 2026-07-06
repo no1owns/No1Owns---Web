@@ -1,10 +1,32 @@
 const STORAGE_KEY = 'cbg_saved_briefs_v1';
 const DRAFT_KEY = 'cbg_draft_v1';
 
+function loremFlickrUrl(keyword, w, h, lock) {
+  return `https://loremflickr.com/${w}/${h}/${encodeURIComponent(keyword)}?lock=${lock}`;
+}
+
 const DELIVERABLE_PRESETS = [
-  'Social posts', 'Landing page', 'Video / motion', 'Pitch deck',
-  'Print collateral', 'Email campaign', 'Paid ad set', 'Brand guidelines',
-  'Website', 'Packaging'
+  { label: 'Social posts', keyword: 'socialmedia,phone', lock: 201 },
+  { label: 'Landing page', keyword: 'website,laptop', lock: 202 },
+  { label: 'Video / motion', keyword: 'videocamera,film', lock: 203 },
+  { label: 'Pitch deck', keyword: 'presentation,office', lock: 204 },
+  { label: 'Print collateral', keyword: 'print,paper', lock: 205 },
+  { label: 'Email campaign', keyword: 'email,mail', lock: 206 },
+  { label: 'Paid ad set', keyword: 'advertising,marketing', lock: 207 },
+  { label: 'Brand guidelines', keyword: 'design,swatches', lock: 208 },
+  { label: 'Website', keyword: 'website,code', lock: 209 },
+  { label: 'Packaging', keyword: 'packaging,box', lock: 210 }
+];
+
+const PROJECT_TYPES = [
+  { value: 'Brand identity', keyword: 'branding,logo', lock: 101 },
+  { value: 'Campaign', keyword: 'advertising,billboard', lock: 102 },
+  { value: 'Website / digital product', keyword: 'website,laptop', lock: 103 },
+  { value: 'Social content', keyword: 'smartphone,socialmedia', lock: 104 },
+  { value: 'Video / motion', keyword: 'camera,film', lock: 105 },
+  { value: 'Packaging', keyword: 'packaging,product', lock: 106 },
+  { value: 'Pitch / deck', keyword: 'presentation,meeting', lock: 107 },
+  { value: 'Other', keyword: 'creative,studio', lock: 108 }
 ];
 
 const DO_PRESETS = [
@@ -24,15 +46,15 @@ const DONT_PRESETS = [
 ];
 
 const TONE_MATRIX = {
-  'formal-minimal':   { label: 'Refined & Understated', descriptors: ['refined', 'understated', 'precise', 'restrained', 'elegant'] },
-  'formal-balanced':  { label: 'Authoritative & Polished', descriptors: ['authoritative', 'polished', 'credible', 'composed', 'professional'] },
-  'formal-bold':      { label: 'Commanding & Confident', descriptors: ['commanding', 'confident', 'assertive', 'powerful', 'decisive'] },
-  'balanced-minimal': { label: 'Clean & Considered', descriptors: ['clean', 'considered', 'clear', 'calm', 'intentional'] },
-  'balanced-balanced':{ label: 'Approachable & Grounded', descriptors: ['approachable', 'grounded', 'balanced', 'warm', 'steady'] },
-  'balanced-bold':    { label: 'Dynamic & Assured', descriptors: ['dynamic', 'assured', 'energetic', 'vivid', 'striking'] },
-  'playful-minimal':  { label: 'Light & Witty', descriptors: ['light', 'witty', 'breezy', 'charming', 'easygoing'] },
-  'playful-balanced': { label: 'Friendly & Spirited', descriptors: ['friendly', 'spirited', 'upbeat', 'playful', 'warm'] },
-  'playful-bold':     { label: 'Bold & Irreverent', descriptors: ['bold', 'irreverent', 'exuberant', 'provocative', 'daring'] }
+  'formal-minimal':   { label: 'Refined & Understated', descriptors: ['refined', 'understated', 'precise', 'restrained', 'elegant'], keyword: 'minimalist,architecture', lock: 301 },
+  'formal-balanced':  { label: 'Authoritative & Polished', descriptors: ['authoritative', 'polished', 'credible', 'composed', 'professional'], keyword: 'corporate,office', lock: 302 },
+  'formal-bold':      { label: 'Commanding & Confident', descriptors: ['commanding', 'confident', 'assertive', 'powerful', 'decisive'], keyword: 'skyscraper,city', lock: 303 },
+  'balanced-minimal': { label: 'Clean & Considered', descriptors: ['clean', 'considered', 'clear', 'calm', 'intentional'], keyword: 'interior,scandinavian', lock: 304 },
+  'balanced-balanced':{ label: 'Approachable & Grounded', descriptors: ['approachable', 'grounded', 'balanced', 'warm', 'steady'], keyword: 'nature,people', lock: 305 },
+  'balanced-bold':    { label: 'Dynamic & Assured', descriptors: ['dynamic', 'assured', 'energetic', 'vivid', 'striking'], keyword: 'sports,energy', lock: 306 },
+  'playful-minimal':  { label: 'Light & Witty', descriptors: ['light', 'witty', 'breezy', 'charming', 'easygoing'], keyword: 'pastel,quirky', lock: 307 },
+  'playful-balanced': { label: 'Friendly & Spirited', descriptors: ['friendly', 'spirited', 'upbeat', 'playful', 'warm'], keyword: 'friends,colorful', lock: 308 },
+  'playful-bold':     { label: 'Bold & Irreverent', descriptors: ['bold', 'irreverent', 'exuberant', 'provocative', 'daring'], keyword: 'neon,streetart', lock: 309 }
 };
 
 function toneBucket(value) {

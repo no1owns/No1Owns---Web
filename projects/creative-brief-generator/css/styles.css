@@ -396,12 +396,22 @@ a { color: var(--accent); }
 .tone-preview {
   background: var(--accent-soft);
   border-radius: var(--radius-input);
-  padding: 12px 14px;
+  padding: 10px;
   margin-bottom: 4px;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 14px;
+  overflow: hidden;
 }
+.tone-preview-photo {
+  width: 96px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--border);
+  flex-shrink: 0;
+}
+.tone-preview-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .tone-preview strong { color: var(--accent); }
 .tone-preview-tags {
   display: flex;
@@ -410,6 +420,52 @@ a { color: var(--accent); }
   font-size: 11.5px;
   color: var(--text-secondary);
 }
+
+/* ── Photo cards (shared: tone preview, type cards, checklist items) ── */
+.photo-card.photo-failed .tone-preview-photo,
+.photo-card.photo-failed .type-card-photo,
+.photo-card.photo-failed .checklist-photo {
+  display: none;
+}
+.photo-card.photo-failed.tone-preview { padding: 12px 14px; }
+
+/* ── Project type cards ── */
+.type-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+}
+.type-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-alt);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-input);
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font);
+  transition: border-color 0.15s;
+}
+.type-card:hover { border-color: var(--border-strong); }
+.type-card.selected { border-color: var(--accent); }
+.type-card-photo {
+  width: 100%;
+  height: 64px;
+  object-fit: cover;
+  background: var(--border);
+  display: block;
+}
+.type-card-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 8px 9px;
+  text-align: left;
+}
+.type-card.selected .type-card-label { color: var(--accent); }
+.type-card.photo-failed { padding-top: 0; }
+.type-card.photo-failed .type-card-label { padding-top: 12px; }
 
 /* ── Checklist / tag builder ── */
 .checklist-grid {
@@ -421,16 +477,24 @@ a { color: var(--accent); }
 .checklist-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 13px;
   background: var(--surface-alt);
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
-  padding: 9px 11px;
+  padding: 8px 11px;
   cursor: pointer;
   transition: border-color 0.15s;
 }
 .checklist-item:hover { border-color: var(--border-strong); }
+.checklist-photo {
+  width: 40px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--border);
+  flex-shrink: 0;
+}
 
 .preset-chip-row {
   display: flex;
@@ -516,8 +580,8 @@ a { color: var(--accent); }
 
 .reference-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
   margin-top: 16px;
 }
 
@@ -534,14 +598,17 @@ a { color: var(--accent); }
 
 .reference-thumb {
   width: 100%;
-  height: 104px;
+  height: 150px;
   object-fit: cover;
   background: var(--border);
   display: block;
+  cursor: zoom-in;
+  transition: opacity 0.15s;
 }
+.reference-thumb:hover { opacity: 0.9; }
 .reference-link-thumb {
   width: 100%;
-  height: 104px;
+  height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -694,6 +761,38 @@ a { color: var(--accent); }
 }
 .nl-match-list b { color: var(--accent); }
 
+/* ── Lightbox ── */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 30, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  z-index: 100;
+}
+.lightbox-image {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-md);
+}
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+.lightbox-close:hover { background: rgba(255, 255, 255, 0.25); }
+
 /* ── Toast ── */
 .toast {
   position: fixed;
@@ -762,6 +861,14 @@ a { color: var(--accent); }
   .tone-slider { height: 6px; }
   .tone-slider::-webkit-slider-thumb { width: 24px; height: 24px; }
   .tone-slider::-moz-range-thumb { width: 24px; height: 24px; }
+
+  /* Photo selection cards */
+  .type-card-grid { grid-template-columns: repeat(2, 1fr); }
+  .tone-preview { flex-direction: column; align-items: stretch; }
+  .tone-preview-photo { width: 100%; height: 90px; }
+  .reference-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .lightbox { padding: 16px; }
+  .lightbox-close { top: 12px; right: 12px; }
 
   /* Chat mode: stack thread above progress instead of side-by-side */
   .chat-layout { grid-template-columns: 1fr; }

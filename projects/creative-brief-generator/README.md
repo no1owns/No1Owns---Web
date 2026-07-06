@@ -22,13 +22,14 @@ A `.brief` file is a UTF-8 JSON file (just a renamed `.json`) with a defined str
 - Dual-axis tone slider (Formal↔Playful, Minimal↔Bold) that auto-generates a tone label and descriptors
 - Deliverables checklist plus custom tag builder
 - Do/Don't guardrail builder with common presets
-- Visual reference board — upload images (stored as base64) or paste URLs, drag to reorder, caption each
+- Visual reference board — upload images (stored as base64) or paste URLs, drag to reorder, caption each, click any image for a full-size lightbox preview
+- Photo-illustrated selection cards for project type, deliverables, and tone/mood (via [LoremFlickr](https://loremflickr.com), a free keyless photo service) — if a photo fails to load, the card gracefully falls back to a plain text tile
 - Named saves to `localStorage`, plus autosave of the current draft
 - Export: download the `.brief` file, download a standalone `.md`, or copy the system prompt straight to your clipboard
 
 ## Usage
 
-Open `index.html` in any browser — it works entirely offline, including as a local `file://` page. Fill in the sections from the top nav, generate the brief from the bottom bar, then export.
+Open `index.html` in any browser. Everything works offline, including as a local `file://` page, **except** the photo thumbnails on selection cards — those need an internet connection to load from LoremFlickr; without one they fall back to plain text cards automatically. Fill in the sections from the top nav, generate the brief from the bottom bar, then export.
 
 ## Stack
 

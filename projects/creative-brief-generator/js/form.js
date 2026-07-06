@@ -1,7 +1,6 @@
 const FIELD_BINDINGS = [
   ['f-project-name', 'project.name'],
   ['f-project-client', 'project.client'],
-  ['f-project-type', 'project.type'],
   ['f-project-budget', 'project.budget_range'],
   ['f-project-lead', 'project.lead'],
   ['f-strategy-bizobj', 'strategy.business_objective'],
@@ -88,21 +87,51 @@ function initQuickAdd() {
   });
 }
 
+function handlePhotoError(img) {
+  const card = img.closest('.photo-card');
+  if (card) card.classList.add('photo-failed');
+}
+
 function renderDeliverablesChecklist() {
   const container = document.getElementById('deliverablesChecklist');
   container.innerHTML = '';
   DELIVERABLE_PRESETS.forEach(item => {
     const label = document.createElement('label');
-    label.className = 'checklist-item';
-    const checked = AppState.data.execution.deliverables_preset.includes(item);
-    label.innerHTML = `<input type="checkbox" ${checked ? 'checked' : ''} /> <span>${item}</span>`;
+    label.className = 'checklist-item photo-card';
+    const checked = AppState.data.execution.deliverables_preset.includes(item.label);
+    label.innerHTML = `
+      <img class="checklist-photo" src="${loremFlickrUrl(item.keyword, 96, 72, item.lock)}" alt="" loading="lazy" onerror="handlePhotoError(this)" />
+      <input type="checkbox" ${checked ? 'checked' : ''} />
+      <span>${item.label}</span>`;
     label.querySelector('input').addEventListener('change', (e) => {
       const arr = AppState.data.execution.deliverables_preset;
-      if (e.target.checked) { if (!arr.includes(item)) arr.push(item); }
-      else { AppState.data.execution.deliverables_preset = arr.filter(x => x !== item); }
+      if (e.target.checked) { if (!arr.includes(item.label)) arr.push(item.label); }
+      else { AppState.data.execution.deliverables_preset = arr.filter(x => x !== item.label); }
       scheduleAutosave();
     });
     container.appendChild(label);
+  });
+}
+
+function renderProjectTypeGrid() {
+  const container = document.getElementById('projectTypeGrid');
+  container.innerHTML = '';
+  PROJECT_TYPES.forEach(type => {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'type-card photo-card';
+    const selected = AppState.data.project.type === type.value;
+    if (selected) card.classList.add('selected');
+    card.innerHTML = `
+      <img class="type-card-photo" src="${loremFlickrUrl(type.keyword, 160, 100, type.lock)}" alt="" loading="lazy" onerror="handlePhotoError(this)" />
+      <span class="type-card-label">${type.value}</span>`;
+    card.addEventListener('click', () => {
+      const alreadySelected = AppState.data.project.type === type.value;
+      AppState.data.project.type = alreadySelected ? '' : type.value;
+      renderProjectTypeGrid();
+      scheduleAutosave();
+    });
+    container.appendChild(card);
   });
 }
 
@@ -173,6 +202,7 @@ function initTonesSliders() {
   const boldSlider = document.getElementById('tone-minimal-bold');
   const labelEl = document.getElementById('tonePreviewLabel');
   const tagsEl = document.getElementById('tonePreviewDescriptors');
+  const photoEl = document.getElementById('tonePreviewPhoto');
 
   function render() {
     const fp = Number(formalSlider.value);
@@ -182,6 +212,8 @@ function initTonesSliders() {
     const entry = getToneMatrixEntry(fp, mb);
     labelEl.textContent = entry.label;
     tagsEl.innerHTML = entry.descriptors.map(d => `<span>${d}</span>`).join('');
+    photoEl.closest('.photo-card').classList.remove('photo-failed');
+    photoEl.src = loremFlickrUrl(entry.keyword, 300, 160, entry.lock);
   }
 
   formalSlider.value = AppState.data.strategy.tone_axes.formalPlayful;
@@ -220,6 +252,7 @@ function refreshFormFromState() {
     const el = document.getElementById(id);
     if (el) el.value = getByPath(AppState.data, path) || '';
   });
+  renderProjectTypeGrid();
   renderDeliverablesChecklist();
   initDeliverablesTagBuilder();
   initAiContextBuilders();
@@ -231,6 +264,7 @@ function refreshFormFromState() {
 function initForm() {
   initFieldBindings();
   initQuickAdd();
+  renderProjectTypeGrid();
   renderDeliverablesChecklist();
   initDeliverablesTagBuilder();
   initAiContextBuilders();
