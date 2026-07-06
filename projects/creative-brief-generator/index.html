@@ -14,31 +14,33 @@
     </div>
   </header>
 
-  <nav class="section-nav" id="sectionNav">
-    <button class="nav-chip active" data-target="project">Project</button>
-    <button class="nav-chip" data-target="strategy">Strategy</button>
-    <button class="nav-chip" data-target="execution">Execution</button>
-    <button class="nav-chip" data-target="references">References</button>
-    <button class="nav-chip" data-target="ai-context">AI Context</button>
-  </nav>
+  <div class="sticky-header">
+    <nav class="section-nav" id="sectionNav">
+      <button class="nav-chip active" data-target="project">Project</button>
+      <button class="nav-chip" data-target="strategy">Strategy</button>
+      <button class="nav-chip" data-target="execution">Execution</button>
+      <button class="nav-chip" data-target="references">References</button>
+      <button class="nav-chip" data-target="ai-context">AI Context</button>
+    </nav>
 
-  <div class="toolbar">
-    <div class="mode-toggle" id="modeToggle" role="tablist">
-      <button class="mode-btn active" data-mode="form" role="tab">Form</button>
-      <button class="mode-btn" data-mode="chat" role="tab">Guided Chat</button>
-      <button class="mode-btn" data-mode="nlimport" role="tab">Paste &amp; Import</button>
-    </div>
+    <div class="toolbar">
+      <div class="mode-toggle" id="modeToggle" role="tablist">
+        <button class="mode-btn active" data-mode="form" role="tab">Form</button>
+        <button class="mode-btn" data-mode="chat" role="tab">Guided Chat</button>
+        <button class="mode-btn" data-mode="nlimport" role="tab">Paste &amp; Import</button>
+      </div>
 
-    <div class="saved-briefs">
-      <select class="input input-sm" id="savedBriefsSelect">
-        <option value="">New brief</option>
-      </select>
-      <button class="icon-btn" id="saveBriefBtn" title="Save this brief" aria-label="Save">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
-      </button>
-      <button class="icon-btn" id="deleteBriefBtn" title="Delete saved brief" aria-label="Delete">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-      </button>
+      <div class="saved-briefs">
+        <select class="input input-sm" id="savedBriefsSelect">
+          <option value="">New brief</option>
+        </select>
+        <button class="icon-btn" id="saveBriefBtn" title="Save this brief" aria-label="Save">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+        </button>
+        <button class="icon-btn" id="deleteBriefBtn" title="Delete saved brief" aria-label="Delete">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
     </div>
   </div>
 
