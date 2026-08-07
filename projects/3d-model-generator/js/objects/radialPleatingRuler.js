@@ -47,41 +47,43 @@ export const radialPleatingRuler = {
     // 2D shape, not overlaid markers), so the browser preview and the
     // exported STL both reflect the actual cut geometry.
     //
-    // Each slot spans a fixed angular width (not a fixed linear width) —
-    // this is not just a style choice: with many slots converging on one
-    // apex, a constant *linear* width is geometrically impossible to fit
-    // near the tip without adjacent slots overlapping (an earlier pass
-    // tried that and it silently broke Three.js's triangulator, dropping
-    // most of each hole). A fixed angular width tapers the physical slot
-    // width down to ~0 at the centre by construction, which is also what
-    // the reference photo actually shows, and the 0.8 factor below caps
-    // each slot within its own angular budget so neighbors can never
-    // overlap regardless of slot count or width.
-    const slotCount = Math.round(values.slots);
+    // The reference keeps a solid strip straight down the centreline
+    // (where its printed mm scale sits) and arranges the slots as two
+    // mirrored fans flanking it — not one continuous fan sweeping through
+    // the middle. Each slot spans a fixed *angular* width (not a fixed
+    // linear width): with many slots on each side converging toward the
+    // spine, a constant linear width is geometrically impossible to fit
+    // without adjacent slots overlapping (an earlier pass tried that and
+    // it silently broke Three.js's triangulator, dropping most of each
+    // hole). A fixed angular width tapers the physical slot width down
+    // toward the spine by construction, and the 0.8 factor caps each slot
+    // within its own angular budget so neighbors can never overlap.
     const margin = A * 0.04; // keep the outermost slots off the straight side edges
     const usableAngle = A - 2 * margin;
-    const angularStep = usableAngle / slotCount;
+    const spineHalfAngle = usableAngle * 0.06; // solid centre strip for the ruler markings
+    const sideAngle = usableAngle / 2 - spineHalfAngle;
+    const slotsPerSide = Math.max(1, Math.round(values.slots / 2));
+    const angularStep = sideAngle / slotsPerSide;
 
     const tieHoleR = values.tieHoleDiameter / 2;
     const tieBandR = R - tieHoleR - 1.5; // tie holes sit right against the rounded edge
     const outerR = Math.min(R * 0.95, tieBandR - tieHoleR - 2); // slots stop just short of the tie-hole band
     const innerR = R * 0.06; // thin solid hub left near the apex for strength
     const midR = (innerR + outerR) / 2;
+    const halfAngle = Math.min((values.slotWidth / 2) / midR, (angularStep / 2) * 0.8);
 
-    for (let i = 0; i < slotCount; i++) {
-      const center = -A / 2 + margin + angularStep * (i + 0.5);
-      const halfAngle = Math.min(
-        (values.slotWidth / 2) / midR,
-        (angularStep / 2) * 0.8
-      );
-      const a0 = center - halfAngle, a1 = center + halfAngle;
-      const hole = new THREE.Path();
-      hole.moveTo(innerR * Math.sin(a0), -innerR * Math.cos(a0));
-      hole.lineTo(outerR * Math.sin(a0), -outerR * Math.cos(a0));
-      hole.lineTo(outerR * Math.sin(a1), -outerR * Math.cos(a1));
-      hole.lineTo(innerR * Math.sin(a1), -innerR * Math.cos(a1));
-      hole.closePath();
-      shape.holes.push(hole);
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < slotsPerSide; i++) {
+        const center = side * (spineHalfAngle + angularStep * (i + 0.5));
+        const a0 = center - halfAngle, a1 = center + halfAngle;
+        const hole = new THREE.Path();
+        hole.moveTo(innerR * Math.sin(a0), -innerR * Math.cos(a0));
+        hole.lineTo(outerR * Math.sin(a0), -outerR * Math.cos(a0));
+        hole.lineTo(outerR * Math.sin(a1), -outerR * Math.cos(a1));
+        hole.lineTo(innerR * Math.sin(a1), -innerR * Math.cos(a1));
+        hole.closePath();
+        shape.holes.push(hole);
+      }
     }
 
     // Tie holes: a real through-cut ring of circles right along the
