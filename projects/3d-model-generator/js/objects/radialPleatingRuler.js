@@ -29,15 +29,64 @@ export const radialPleatingRuler = {
     const R = values.radius;
     const A = values.angle * Math.PI / 180;
     const T = values.thickness;
-    const segments = 48;
+    const segments = 64;
 
+    // Outer silhouette: apex, two straight "pleat guide" edges, rounded
+    // (arc) outer edge — a plain circular sector. The apex sits at the
+    // local origin with the arc trailing off in -Y, so the tip reads as
+    // "up" once framed by the viewer (Three.js treats +Y as screen-up).
     const shape = new THREE.Shape();
     shape.moveTo(0, 0);
     for (let i = 0; i <= segments; i++) {
       const t = -A / 2 + (A * i) / segments;
-      shape.lineTo(R * Math.sin(t), R * Math.cos(t));
+      shape.lineTo(R * Math.sin(t), -R * Math.cos(t));
     }
     shape.lineTo(0, 0);
+
+    // Radiating pleat-guide slots: real through-cut openings (holes in the
+    // 2D shape, not overlaid markers), so the browser preview and the
+    // exported STL both reflect the actual cut geometry. Each slot is a
+    // thin angular sector, which naturally tapers wider as it moves away
+    // from the tip — matching the reference's converging guide edges.
+    const slotCount = Math.round(values.slots);
+    const innerR = R * 0.14; // solid hub left near the apex for strength
+    const outerR = R * 0.78; // slots stop short of the edge, leaving room for the tie-hole band
+    const midR = (innerR + outerR) / 2;
+    const margin = A * 0.05; // keep the outermost slots off the straight side edges
+    const usableAngle = A - 2 * margin;
+
+    for (let i = 0; i < slotCount; i++) {
+      const center = -A / 2 + margin + (usableAngle * (i + 0.5)) / slotCount;
+      const halfAngle = Math.min(
+        (values.slotWidth / 2) / midR,
+        (usableAngle / slotCount / 2) * 0.85
+      );
+      const a0 = center - halfAngle, a1 = center + halfAngle;
+      const hole = new THREE.Path();
+      hole.moveTo(innerR * Math.sin(a0), -innerR * Math.cos(a0));
+      hole.lineTo(outerR * Math.sin(a0), -outerR * Math.cos(a0));
+      hole.lineTo(outerR * Math.sin(a1), -outerR * Math.cos(a1));
+      hole.lineTo(innerR * Math.sin(a1), -innerR * Math.cos(a1));
+      hole.closePath();
+      shape.holes.push(hole);
+    }
+
+    // Tie holes: a real through-cut ring of circles along the rounded
+    // outer edge, spaced by arc length so bigger/smaller rulers get
+    // proportionately more/fewer holes.
+    const tieHoleR = values.tieHoleDiameter / 2;
+    const tieBandR = Math.min(R - tieHoleR - 3, Math.max(outerR + tieHoleR + 4, R * 0.92));
+    const arcLength = tieBandR * A;
+    const tieSpacing = Math.max(values.tieHoleDiameter * 2.2, 8);
+    const tieCount = Math.max(4, Math.min(20, Math.round(arcLength / tieSpacing) + 1));
+
+    for (let i = 0; i < tieCount; i++) {
+      const t = -A / 2 + (A * i) / (tieCount - 1);
+      const cx = tieBandR * Math.sin(t), cy = -tieBandR * Math.cos(t);
+      const hole = new THREE.Path();
+      hole.absarc(cx, cy, tieHoleR, 0, Math.PI * 2, false);
+      shape.holes.push(hole);
+    }
 
     const wedgeGeometry = new THREE.ExtrudeGeometry(shape, { depth: T, bevelEnabled: false, curveSegments: segments });
     const wedge = new THREE.Mesh(
@@ -47,33 +96,6 @@ export const radialPleatingRuler = {
 
     const group = new THREE.Group();
     group.add(wedge);
-
-    // Slot and tie-hole markers are a visual preview of the intended
-    // system, not boolean-cut into the mesh — same V1 scope as the
-    // supplied reference model (see README).
-    const markerMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
-    const slots = Math.round(values.slots);
-    for (let i = 0; i < slots; i++) {
-      const frac = (i + 0.5) / slots;
-      const dist = R * 0.18 + frac * R * 0.72;
-      const halfWidth = Math.min(dist * Math.tan(A / 2) * 0.68, dist);
-      const slotGeometry = new THREE.BoxGeometry(halfWidth * 2, Math.max(values.slotWidth * 0.3, 0.6), T + 0.4);
-      const slotMesh = new THREE.Mesh(slotGeometry, markerMaterial);
-      slotMesh.position.set(0, dist, T / 2);
-      group.add(slotMesh);
-    }
-
-    const holeCount = 13;
-    for (let i = 0; i < holeCount; i++) {
-      const t = -A / 2 + (A * i) / (holeCount - 1);
-      const x = (R - 10) * Math.sin(t);
-      const y = (R - 10) * Math.cos(t);
-      const holeGeometry = new THREE.CylinderGeometry(values.tieHoleDiameter / 2, values.tieHoleDiameter / 2, T + 0.4, 16);
-      const holeMesh = new THREE.Mesh(holeGeometry, markerMaterial);
-      holeMesh.rotation.x = Math.PI / 2;
-      holeMesh.position.set(x, y, T / 2);
-      group.add(holeMesh);
-    }
 
     return { object: group, exportGeometry: wedgeGeometry };
   },
