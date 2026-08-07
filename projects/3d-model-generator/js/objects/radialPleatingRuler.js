@@ -45,13 +45,18 @@ export const radialPleatingRuler = {
 
     // Radiating pleat-guide slots: real through-cut openings (holes in the
     // 2D shape, not overlaid markers), so the browser preview and the
-    // exported STL both reflect the actual cut geometry. In the reference,
-    // the slots run almost the entire length of the ruler — a thin solid
-    // hub at the tip, a thin solid rim at the edge, everything else is
-    // slot — and stay close to a constant width rather than fanning out
-    // sharply, so these are built from explicit Cartesian offsets (a
-    // near-uniform width, tapering only slightly) rather than a fixed
-    // angular width that would blow up near the tip.
+    // exported STL both reflect the actual cut geometry.
+    //
+    // Each slot spans a fixed angular width (not a fixed linear width) —
+    // this is not just a style choice: with many slots converging on one
+    // apex, a constant *linear* width is geometrically impossible to fit
+    // near the tip without adjacent slots overlapping (an earlier pass
+    // tried that and it silently broke Three.js's triangulator, dropping
+    // most of each hole). A fixed angular width tapers the physical slot
+    // width down to ~0 at the centre by construction, which is also what
+    // the reference photo actually shows, and the 0.8 factor below caps
+    // each slot within its own angular budget so neighbors can never
+    // overlap regardless of slot count or width.
     const slotCount = Math.round(values.slots);
     const margin = A * 0.04; // keep the outermost slots off the straight side edges
     const usableAngle = A - 2 * margin;
@@ -60,27 +65,21 @@ export const radialPleatingRuler = {
     const tieHoleR = values.tieHoleDiameter / 2;
     const tieBandR = R - tieHoleR - 1.5; // tie holes sit right against the rounded edge
     const outerR = Math.min(R * 0.95, tieBandR - tieHoleR - 2); // slots stop just short of the tie-hole band
-    // Inner radius grows only as far as needed to keep dense/wide slots
-    // from overlapping near the tip; otherwise it stays small, matching
-    // how close the reference's slots start to the centre point.
-    const minInnerR = (values.slotWidth * 1.3) / Math.max(angularStep, 0.01);
-    const innerR = Math.max(R * 0.05, Math.min(minInnerR, R * 0.3));
+    const innerR = R * 0.06; // thin solid hub left near the apex for strength
+    const midR = (innerR + outerR) / 2;
 
     for (let i = 0; i < slotCount; i++) {
       const center = -A / 2 + margin + angularStep * (i + 0.5);
-      const dirX = Math.sin(center), dirY = -Math.cos(center);
-      const perpX = Math.cos(center), perpY = Math.sin(center);
-      const innerHalf = values.slotWidth / 2;
-      const outerHalf = innerHalf * 1.4; // gentle taper, not a full angular fan-out
-
-      const ix = dirX * innerR, iy = dirY * innerR;
-      const ox = dirX * outerR, oy = dirY * outerR;
-
+      const halfAngle = Math.min(
+        (values.slotWidth / 2) / midR,
+        (angularStep / 2) * 0.8
+      );
+      const a0 = center - halfAngle, a1 = center + halfAngle;
       const hole = new THREE.Path();
-      hole.moveTo(ix - perpX * innerHalf, iy - perpY * innerHalf);
-      hole.lineTo(ox - perpX * outerHalf, oy - perpY * outerHalf);
-      hole.lineTo(ox + perpX * outerHalf, oy + perpY * outerHalf);
-      hole.lineTo(ix + perpX * innerHalf, iy + perpY * innerHalf);
+      hole.moveTo(innerR * Math.sin(a0), -innerR * Math.cos(a0));
+      hole.lineTo(outerR * Math.sin(a0), -outerR * Math.cos(a0));
+      hole.lineTo(outerR * Math.sin(a1), -outerR * Math.cos(a1));
+      hole.lineTo(innerR * Math.sin(a1), -innerR * Math.cos(a1));
       hole.closePath();
       shape.holes.push(hole);
     }
@@ -90,7 +89,11 @@ export const radialPleatingRuler = {
     // get proportionately more/fewer holes.
     const arcLength = tieBandR * A;
     const tieSpacing = Math.max(values.tieHoleDiameter * 2, 7);
-    const tieCount = Math.max(6, Math.min(24, Math.round(arcLength / tieSpacing) + 1));
+    // Floor of 2 (not a larger fixed minimum): a hard floor that ignores
+    // arc length is exactly the bug the slots just had — on a short arc
+    // with large holes it forces overlapping holes and breaks the
+    // triangulator the same way.
+    const tieCount = Math.max(2, Math.min(24, Math.round(arcLength / tieSpacing) + 1));
 
     for (let i = 0; i < tieCount; i++) {
       const t = -A / 2 + (A * i) / (tieCount - 1);
