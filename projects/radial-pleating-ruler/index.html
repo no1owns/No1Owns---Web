@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Radial Pleating Ruler Configurator</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app">
+  <aside>
+    <h1>Radial Pleating Ruler</h1>
+    <div class="sub">Parametric V1 configurator</div>
+    <label>Preset</label>
+    <div class="preset">
+      <button onclick="preset(60)">60 mm</button>
+      <button onclick="preset(100)">100 mm</button>
+      <button onclick="preset(140)">140 mm</button>
+    </div>
+    <label>Radius</label>
+    <div class="row">
+      <input id="radius" type="range" min="50" max="180" value="100" oninput="draw()">
+      <input id="radiusN" type="number" value="100" oninput="sync('radiusN','radius');draw()">
+    </div>
+    <label>Wedge angle</label>
+    <div class="row">
+      <input id="angle" type="range" min="25" max="70" value="42" oninput="draw()">
+      <input id="angleN" type="number" value="42" oninput="sync('angleN','angle');draw()">
+    </div>
+    <label>Thickness (mm)</label>
+    <input id="thick" type="number" min="2" max="8" step=".2" value="3">
+    <label>Pleating slots</label>
+    <input id="slots" type="number" min="4" max="24" value="12" oninput="draw()">
+    <label>Slot width (mm)</label>
+    <input id="slotw" type="number" min="3" max="10" step=".5" value="5" oninput="draw()">
+    <label>Tie-hole diameter (mm)</label>
+    <input id="holed" type="number" min="3" max="10" step=".5" value="5" oninput="draw()">
+    <button class="primary" onclick="exportSTL()">Export STL</button>
+    <button onclick="saveConfig()">Save configuration</button>
+    <div class="note">V1 generates a printable wedge and previews the pleating system. Browser export includes the base geometry. The next CAD pass can add true boolean-cut slots, tie holes, clip notches and embossed metric markings.</div>
+  </aside>
+  <main>
+    <div id="stage"><svg id="svg" viewBox="-120 -10 240 220"></svg></div>
+  </main>
+</div>
+<script src="js/app.js"></script>
+</body>
+</html>
