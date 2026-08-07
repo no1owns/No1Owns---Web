@@ -20,7 +20,9 @@ New objects are added as modules in `js/objects/` (see `js/objects/radialPleatin
 
 ## V1 note (Radial Pleating Ruler)
 
-The live 3D preview and exported STL show the base wedge geometry; the pleating slots and tie holes are rendered as visual markers on top of it, not boolean-cut into the mesh. The bundled reference model under `models/radial-pleating-ruler/` has the same scope. A subsequent CAD pass should boolean-cut the slots/holes/notches and add printable metric engraving after test-printing the overall proportions.
+The live 3D preview and exported STL now cut the pleating slots and tie holes directly through the wedge geometry (real openings, not overlaid markers) — radiating slots that taper wider away from the tip, and a tie-hole ring spaced along the rounded outer edge.
+
+Not yet modeled: the small clip notches at each slot's outer tip, and the printed mm graduation scale down the centerline — both are visual/functional details on the reference product, not structural. The bundled reference model under `models/radial-pleating-ruler/` predates this pass and only has the base wedge (no cut slots/holes). This remains a clean-room interpretation, not a guaranteed exact duplicate — the source reference doesn't establish exact dimensions.
 
 ## Usage
 
