@@ -16,7 +16,7 @@ export const radialPleatingRuler = {
     { key: 'radius', label: 'Radius (mm)', type: 'range', min: 50, max: 180, step: 1, default: 100 },
     { key: 'angle', label: 'Wedge angle (°)', type: 'range', min: 25, max: 70, step: 1, default: 42 },
     { key: 'thickness', label: 'Thickness (mm)', type: 'number', min: 2, max: 8, step: 0.2, default: 3 },
-    { key: 'slots', label: 'Pleating slots', type: 'number', min: 4, max: 24, step: 1, default: 12 },
+    { key: 'slots', label: 'Pleating slots', type: 'number', min: 6, max: 32, step: 1, default: 18 },
     { key: 'slotWidth', label: 'Slot width (mm)', type: 'number', min: 3, max: 10, step: 0.5, default: 5 },
     { key: 'tieHoleDiameter', label: 'Tie-hole diameter (mm)', type: 'number', min: 3, max: 10, step: 0.5, default: 5 },
   ],
@@ -45,40 +45,52 @@ export const radialPleatingRuler = {
 
     // Radiating pleat-guide slots: real through-cut openings (holes in the
     // 2D shape, not overlaid markers), so the browser preview and the
-    // exported STL both reflect the actual cut geometry. Each slot is a
-    // thin angular sector, which naturally tapers wider as it moves away
-    // from the tip — matching the reference's converging guide edges.
+    // exported STL both reflect the actual cut geometry. In the reference,
+    // the slots run almost the entire length of the ruler — a thin solid
+    // hub at the tip, a thin solid rim at the edge, everything else is
+    // slot — and stay close to a constant width rather than fanning out
+    // sharply, so these are built from explicit Cartesian offsets (a
+    // near-uniform width, tapering only slightly) rather than a fixed
+    // angular width that would blow up near the tip.
     const slotCount = Math.round(values.slots);
-    const innerR = R * 0.14; // solid hub left near the apex for strength
-    const outerR = R * 0.78; // slots stop short of the edge, leaving room for the tie-hole band
-    const midR = (innerR + outerR) / 2;
-    const margin = A * 0.05; // keep the outermost slots off the straight side edges
+    const margin = A * 0.04; // keep the outermost slots off the straight side edges
     const usableAngle = A - 2 * margin;
+    const angularStep = usableAngle / slotCount;
+
+    const tieHoleR = values.tieHoleDiameter / 2;
+    const tieBandR = R - tieHoleR - 1.5; // tie holes sit right against the rounded edge
+    const outerR = Math.min(R * 0.95, tieBandR - tieHoleR - 2); // slots stop just short of the tie-hole band
+    // Inner radius grows only as far as needed to keep dense/wide slots
+    // from overlapping near the tip; otherwise it stays small, matching
+    // how close the reference's slots start to the centre point.
+    const minInnerR = (values.slotWidth * 1.3) / Math.max(angularStep, 0.01);
+    const innerR = Math.max(R * 0.05, Math.min(minInnerR, R * 0.3));
 
     for (let i = 0; i < slotCount; i++) {
-      const center = -A / 2 + margin + (usableAngle * (i + 0.5)) / slotCount;
-      const halfAngle = Math.min(
-        (values.slotWidth / 2) / midR,
-        (usableAngle / slotCount / 2) * 0.85
-      );
-      const a0 = center - halfAngle, a1 = center + halfAngle;
+      const center = -A / 2 + margin + angularStep * (i + 0.5);
+      const dirX = Math.sin(center), dirY = -Math.cos(center);
+      const perpX = Math.cos(center), perpY = Math.sin(center);
+      const innerHalf = values.slotWidth / 2;
+      const outerHalf = innerHalf * 1.4; // gentle taper, not a full angular fan-out
+
+      const ix = dirX * innerR, iy = dirY * innerR;
+      const ox = dirX * outerR, oy = dirY * outerR;
+
       const hole = new THREE.Path();
-      hole.moveTo(innerR * Math.sin(a0), -innerR * Math.cos(a0));
-      hole.lineTo(outerR * Math.sin(a0), -outerR * Math.cos(a0));
-      hole.lineTo(outerR * Math.sin(a1), -outerR * Math.cos(a1));
-      hole.lineTo(innerR * Math.sin(a1), -innerR * Math.cos(a1));
+      hole.moveTo(ix - perpX * innerHalf, iy - perpY * innerHalf);
+      hole.lineTo(ox - perpX * outerHalf, oy - perpY * outerHalf);
+      hole.lineTo(ox + perpX * outerHalf, oy + perpY * outerHalf);
+      hole.lineTo(ix + perpX * innerHalf, iy + perpY * innerHalf);
       hole.closePath();
       shape.holes.push(hole);
     }
 
-    // Tie holes: a real through-cut ring of circles along the rounded
-    // outer edge, spaced by arc length so bigger/smaller rulers get
-    // proportionately more/fewer holes.
-    const tieHoleR = values.tieHoleDiameter / 2;
-    const tieBandR = Math.min(R - tieHoleR - 3, Math.max(outerR + tieHoleR + 4, R * 0.92));
+    // Tie holes: a real through-cut ring of circles right along the
+    // rounded outer edge, spaced by arc length so bigger/smaller rulers
+    // get proportionately more/fewer holes.
     const arcLength = tieBandR * A;
-    const tieSpacing = Math.max(values.tieHoleDiameter * 2.2, 8);
-    const tieCount = Math.max(4, Math.min(20, Math.round(arcLength / tieSpacing) + 1));
+    const tieSpacing = Math.max(values.tieHoleDiameter * 2, 7);
+    const tieCount = Math.max(6, Math.min(24, Math.round(arcLength / tieSpacing) + 1));
 
     for (let i = 0; i < tieCount; i++) {
       const t = -A / 2 + (A * i) / (tieCount - 1);
