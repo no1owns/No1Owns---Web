@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3D Model Generator</title>
+<meta name="description" content="Browser-based parametric 3D model generator — pick an object, tune it, orbit around it in real time, export an STL.">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app">
+  <aside>
+    <h1>3D Model Generator</h1>
+    <div class="sub">Parametric objects, live in the browser</div>
+
+    <label>Object</label>
+    <select id="objectSelect"></select>
+
+    <div id="presetRow" class="preset"></div>
+
+    <div id="paramPanel"></div>
+
+    <div class="btnRow">
+      <button id="resetParamsBtn">Reset parameters</button>
+      <button id="resetViewBtn">Reset view</button>
+    </div>
+    <button class="primary" id="exportStlBtn">Export STL</button>
+    <button id="saveConfigBtn">Save configuration</button>
+
+    <div id="referenceLinks" class="note"></div>
+    <div class="note">Drag to rotate &middot; scroll/pinch to zoom &middot; right-click (or two-finger drag) to pan.</div>
+  </aside>
+  <main>
+    <div id="stage"></div>
+  </main>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
